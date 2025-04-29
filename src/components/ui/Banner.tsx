@@ -6,57 +6,37 @@ import Image from 'next/image';
 
 const Banner = () => {
   return (
-    <div className="flex justify-center w-full max-w-full">
-      <Swiper
-        loop={true}
-        modules={[Autoplay]}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-        }}
-        speed={800} 
-      >
-        <SwiperSlide>
-          <Image 
-            src="/img/banner1.webp" 
-            alt="Banner 1" 
-            width={800} 
-            height={300} 
-            layout="intrinsic"
-            priority 
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Image 
-            src="/img/banner2.jpg" 
-            alt="Banner 2" 
-            width={800} 
-            height={300} 
-            layout="intrinsic"
-            priority
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Image 
-            src="/img/banner3.jpg" 
-            alt="Banner 3" 
-            width={800} 
-            height={300} 
-            layout="intrinsic"
-            priority
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Image 
-            src="/img/banner4.jpg" 
-            alt="Banner 4" 
-            width={800} 
-            height={300} 
-            layout="intrinsic"
-            priority
-          />
-        </SwiperSlide>
-      </Swiper>
+    <div className="flex justify-center w-full">
+      <div className="w-full max-w-[800px]">
+        <Swiper
+          loop={true}
+          modules={[Autoplay]}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+          }}
+          speed={800}
+        >
+          {[
+            '/img/banner1.webp',
+            '/img/banner2.jpg',
+            '/img/banner.jpg',
+            '/img/banner4.jpg',
+          ].map((src, idx) => (
+            <SwiperSlide key={idx}>
+            <div className="relative w-full h-[300px] overflow-hidden rounded-lg">
+                <Image
+                  src={src}
+                  alt={`Banner ${idx + 1}`}
+                  fill            
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
     </div>
   );
 };

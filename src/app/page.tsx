@@ -1,10 +1,12 @@
 'use client';
 import Banner from "@/components/ui/Banner";
+import Collections from "@/components/ui/Collections";
 import IntroVideo from "@/components/ui/IntroVideo";
+import { useLanguage } from "@/contexts/LanguageContext";
 import React from "react";
 
 export default function Home() {
-
+  const { t } = useLanguage();
 
   return (
     <div>
@@ -21,17 +23,17 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="text-center mt-8">
-        <p className="text-lg">
-          Enjoy your visit and explore our features!
-        </p>
+      <div className="text-center my-8 text-2xl font-bold">
+        <h2 className="text-lg">
+          {t("slogan")}
+        </h2>
       </div>
       <div className="w-full flex justify-center">
         <div className="w-full max-w-[800px]">
           <Banner />
         </div>
       </div>
-
+    <Collections/>
     </div>
   );
 }
