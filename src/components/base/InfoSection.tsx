@@ -1,68 +1,102 @@
 "use client";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  Crown,
+  CreditCard,
+  Star,
+  LogIn,
+  Banknote,
+} from "lucide-react";
+import { motion } from "framer-motion";
+
+const leftToCenter = {
+  hidden: { opacity: 0, x: -100 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+};
+
+const rightToCenter = {
+  hidden: { opacity: 0, x: 100 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.6 } },
+};
 
 export default function InfoSection() {
+  const { t } = useLanguage();
+
   return (
-    <section className="space-y-8 px-4 py-10">
-      {/* Become a VIP */}
-      <div className="grid md:grid-cols-2 gap-4 bg-red-600 text-white rounded-lg overflow-hidden">
-        <div className="flex flex-col justify-center items-center text-center px-6 py-10">
-          <h2 className="text-2xl font-bold mb-4">BECOME A VIP</h2>
-          <p className="mb-6">
-            Keep updated about new launches, fragrance tips and news, as well as receiving free delivery,
-            exclusive offers and discounts on your favourite brands.
-          </p>
-          <button className="bg-white text-red-600 px-6 py-2 rounded font-semibold hover:bg-red-100">
-            SIGN UP
-          </button>
-          <Link href="#" className="mt-4 underline text-white font-medium hover:text-red-200">
-            Already a VIP? Log in
+    <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4 py-10 max-w-6xl mx-auto">
+      {/* VIP Section */}
+      <motion.div
+        variants={leftToCenter}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="rounded-lg p-4 text-center space-y-4 border border-neutral-200 dark:border-zinc-700 shadow-md h-[300px] flex flex-col justify-between"
+      >
+        <Crown className="mx-auto h-10 w-10" />
+        <h2 className="text-xl font-bold">{t("becomeVip")}</h2>
+        <p className="text-sm">{t("vipDescription")}</p>
+        <Link
+          href="/auth/signup"
+          className="px-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-700 transition text-sm"
+        >
+          {t("signUp")}
+        </Link>
+        <div className="mt-2 flex items-center justify-center gap-2 text-sm">
+          <LogIn size={16} />
+          <Link href="#" className="underline font-medium">
+            {t("alreadyVip")}
           </Link>
         </div>
-        <div className="w-full h-60 md:h-auto">
-          <img
-            src="/images/vip-bottles.jpg" // 👈 thay bằng ảnh thật nếu có
-            alt="Perfume Bottles"
-            className="w-full h-full object-cover"
-          />
-        </div>
-      </div>
+      </motion.div>
 
-      {/* Payment Options + Trustpilot */}
-      <div className="grid md:grid-cols-2 gap-4">
-        {/* Payment Options */}
-        <div className="bg-gray-100 p-6 rounded-lg text-center">
-          <h3 className="text-xl font-bold mb-2">FLEXIBLE PAYMENT OPTIONS</h3>
-          <p className="mb-6">All interest free.</p>
-          <div className="flex justify-center gap-6 flex-wrap">
-            <div className="text-center">
-              <div className="bg-pink-200 text-pink-800 px-4 py-1 rounded-full font-bold mb-2">Klarna.</div>
-              <p>Pay in 3 instalments or up to 30 days later</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-green-200 text-green-800 px-4 py-1 rounded-full font-bold mb-2">clearpay</div>
-              <p>Pay in 4 payments, payable every 2 weeks</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-blue-100 text-blue-800 px-4 py-1 rounded-full font-bold mb-2">PayPal</div>
-              <p>Pay in 3 instalments</p>
-            </div>
-          </div>
-          <p className="mt-4 text-sm underline">Terms and conditions apply.</p>
+      {/* Payment Options */}
+      <motion.div
+        variants={rightToCenter}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="rounded-lg p-4 text-center space-y-2 border border-neutral-200 dark:border-zinc-700 shadow-md h-[300px] flex flex-col justify-between"
+      >
+        <CreditCard className="mx-auto h-8 w-8" />
+        <h3 className="text-base font-bold">{t("flexiblePayment")}</h3>
+        <p className="text-sm">{t("interestFree")}</p>
+        <div className="text-sm">
+          <p className="font-bold">Klarna</p>
+          <p>{t("klarnaText")}</p>
         </div>
+      </motion.div>
 
-        {/* Trustpilot */}
-        <div className="bg-[#000032] text-white p-6 rounded-lg text-center flex flex-col justify-center">
-          <h3 className="text-xl font-bold mb-2">PEOPLE THINK WE ARE</h3>
-          <p className="text-lg">
-            Excellent{" "}
-            <span className="inline-block align-middle ml-2">
-              <img src="/images/trustpilot-stars.png" alt="Trustpilot stars" className="inline h-6" />
-            </span>{" "}
-            Trustpilot
-          </p>
+      {/* Trustpilot */}
+      <motion.div
+        variants={leftToCenter}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="rounded-lg p-4 text-center space-y-2 border border-neutral-200 dark:border-zinc-700 shadow-md h-[300px] flex flex-col justify-between"
+      >
+        <div className="flex items-center justify-center gap-1 mb-2">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className="h-5 w-5" />
+          ))}
         </div>
-      </div>
+        <h3 className="text-base font-bold">{t("trustTitle")}</h3>
+        <p className="text-sm font-semibold">★★★★★</p>
+        <p className="text-xs">{t("trustRating")}</p>
+      </motion.div>
+
+      {/* Real Perfume Partner Section */}
+      <motion.div
+        variants={rightToCenter}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="rounded-lg p-4 text-center space-y-2 border border-neutral-200 dark:border-zinc-700 shadow-md h-[300px] flex flex-col justify-between"
+      >
+        <Banknote className="mx-auto h-8 w-8" />
+        <h3 className="text-base font-bold">{t("realPerfumePartner")}</h3>
+        <p className="text-sm">{t("realPerfumeDescription")}</p>
+      </motion.div>
     </section>
   );
 }

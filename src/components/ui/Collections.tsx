@@ -40,6 +40,7 @@ const Collections: React.FC = () => {
     const toggleShow = () => setShowExtra(prev => !prev);
 
     return (
+        
         <section className="p-4 rounded-2xl">
             {/* Header with navigation */}
             <div className="flex items-center justify-between mb-4">

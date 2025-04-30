@@ -1,10 +1,9 @@
 'use client';
+import InfoSection from "@/components/base/InfoSection";
 import Banner from "@/components/ui/Banner";
 import Brand from "@/components/ui/Brand";
 import Collections from "@/components/ui/Collections";
-import Comment from "@/components/ui/Comment";
 import InfiniteCommentColumn from "@/components/ui/CommentRow";
-import CommentRow from "@/components/ui/CommentRow";
 import IntroVideo from "@/components/ui/IntroVideo";
 import { useLanguage } from "@/contexts/LanguageContext";
 import React from "react";
@@ -63,11 +62,17 @@ export default function Home() {
       message: "Độ lưu hương tốt, mùi lại sang và hiện đại. Xứng đáng từng đồng bỏ ra.",
     }
   ];
-  
+
   return (
     <div>
 
       {/* Video centered */}
+      <div className="w-full flex justify-center mb-8 ">
+        <div className="w-full">
+          <Banner />
+        </div>
+
+      </div>
       <div className="w-full flex justify-center mb-8 ">
 
         <div className="w-2/3 mt-2">
@@ -77,16 +82,10 @@ export default function Home() {
           />
         </div>
       </div>
-
       <div className="text-center my-8 text-2xl font-bold">
         <h2 className="text-lg">
           {t("slogan")}
         </h2>
-      </div>
-      <div className="w-full flex justify-center">
-        <div className="w-full max-w-[800px]">
-          <Banner />
-        </div>
       </div>
       <Brand />
       <Collections />
@@ -102,7 +101,7 @@ export default function Home() {
           <InfiniteCommentColumn comments={testimonials.slice(4, 7)} duration={12} />
         </div>
       </section>
-
+      <InfoSection />
     </div>
   );
 }

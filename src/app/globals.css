@@ -51,3 +51,16 @@ banner
   background-color: #171717;
   color: #ededed;
 }
+/* Light Mode */
+@media (prefers-color-scheme: light) {
+  .banner {
+    background: radial-gradient(circle, rgba(240, 240, 255, 1) 0%, rgba(100, 100, 255, 1) 50%, rgba(50, 50, 150, 1) 100%);
+  }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .banner {
+    background: radial-gradient(circle, rgba(30, 30, 40, 1) 0%, rgba(70, 70, 100, 1) 50%, rgba(0, 0, 40, 1) 100%);
+  }
+}

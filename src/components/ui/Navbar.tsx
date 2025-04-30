@@ -1,36 +1,56 @@
 'use client';
-import { Moon, Sun } from 'lucide-react';
+
+import { Moon, Sun, ShoppingCart } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import DropdownMenu from './DropdownMenu';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ShoppingCart } from 'lucide-react';
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState<boolean>(false);
+  const [mounted, setMounted] = useState(false);
   const { t } = useLanguage();
-  const router = useRouter();  
+  const router = useRouter();
+
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY) {
+        setShowNavbar(false); // Scroll down → hide
+      } else {
+        setShowNavbar(true); // Scroll up → show
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   if (!mounted) return null;
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
-    console.log('Current theme:', theme);
   };
 
   const goToCart = () => {
-    router.push('/cart');  
+    router.push('/cart');
   };
 
   return (
-    <header className="shadow-md">
+    <header
+      className={`shadow-md fixed top-0 left-0 right-0  transition-transform duration-300 z-50 ${
+        showNavbar ? 'translate-y-0' : '-translate-y-full'
+      }`}
+    >
       <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <div className="text-2xl font-bold">
@@ -52,7 +72,7 @@ const Navbar = () => {
           <DropdownMenu
             links={[
               { text: t('perfumeformale'), href: "#male" },
-              { text: t('perfumeforfemale'), href: "female" },
+              { text: t('perfumeforfemale'), href: "#female" },
               { text: "Logout", href: "#logout" },
             ]}
           >
@@ -77,15 +97,14 @@ const Navbar = () => {
           </button>
 
           <LanguageSwitcher />
-          <button onClick={toggleTheme} className="">
-            {theme === 'dark' ? <Moon color='yellow' /> : <Sun color='gray' />}
-          </button>
-          
-          {/* Giỏ hàng */}
-          <button onClick={goToCart}>
-            {theme === 'dark' ? <ShoppingCart color='yellow' /> : <ShoppingCart color='gray' />}
+
+          <button onClick={toggleTheme}>
+            {theme === 'dark' ? <Moon color="yellow" /> : <Sun color="gray" />}
           </button>
 
+          <button onClick={goToCart}>
+            {theme === 'dark' ? <ShoppingCart color="yellow" /> : <ShoppingCart color="gray" />}
+          </button>
         </div>
       </nav>
     </header>

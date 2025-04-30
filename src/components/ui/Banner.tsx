@@ -1,62 +1,51 @@
-"use client";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
-import "swiper/css";
+import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-
-const Banner = () => {
-  const images = [
-    "/img/banner1.webp",
-    "/img/banner2.jpg",
-    "/img/banner.jpg",
-    "/img/banner4.jpg",
-  ];
-
-  const rows = 5;
-  const cols = 8;
+import Image from "next/image";
+export default function Banner() {
+  const { t } = useLanguage();
 
   return (
-    <div className="flex justify-center w-full">
-      <div className="w-full max-w-[800px]">
-        <Swiper
-          loop={true}
-          modules={[Autoplay]}
-          autoplay={{
-            delay: 4000,
-            disableOnInteraction: false,
-          }}
-          speed={1000}
-        >
-          {images.map((src, idx) => (
-            <SwiperSlide key={idx}>
-              <div className="relative w-full h-[300px] overflow-hidden rounded-lg grid grid-cols-8 grid-rows-5">
-                {Array.from({ length: rows * cols }).map((_, tileIdx) => {
-                  const row = Math.floor(tileIdx / cols);
-                  const col = tileIdx % cols;
-                  const delay = (row + col) * 60;
+    <section className="relative">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-24 flex flex-col md:flex-row items-center justify-between">
+        {/* Bên trái */}
+        <div className="max-w-xl text-center md:text-left">
+          <span className="inline-block  text-sm font-medium px-3 py-1 rounded-full mb-4">
+            {t("badge")}
+          </span>
+          <h1 className="text-4xl sm:text-5xl font-extrabold mb-6">
+            {t("titleLine1")} <br className="hidden sm:inline-block" />
+            <span className="">{t("titleHighlight")}</span>
+          </h1>
+          <p className="text-lg mb-8">{t("description")}</p>
 
-                  return (
-                    <div
-                      key={tileIdx}
-                      className="tile"
-                      style={{
-                        backgroundImage: `url(${src})`,
-                        backgroundSize: `${cols * 100}% ${rows * 100}%`,
-                        backgroundPosition: `${(col * 100) / (cols - 1)}% ${
-                          (row * 100) / (rows - 1)
-                        }%`,
-                        animationDelay: `${delay}ms`,
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center md:justify-start">
+            <Link href="#">
+              <span className="px-6 py-3 text-base font-semibold text-white bg-blue-500 rounded-lg  transition cursor-pointer">
+                {t("cta")}
+              </span>
+            </Link>
+            <Link href="#">
+              <span className="flex items-center text-base font-medium  transition cursor-pointer">
+                {t("learnMore")} <span className="ml-2">→</span>
+              </span>
+            </Link>
+          </div>
+        </div>
+
+
+        <div className="mt-16 md:mt-0 md:w-1/2 flex justify-center">
+          <Image
+            src="/img/perfume3.png"
+            alt="Perfume Bottle"
+            width={400}
+            height={400}
+            className="object-contain"
+            priority
+          />
+        </div>
+
       </div>
-    </div>
+    </section>
   );
-};
-
-export default Banner;
+}

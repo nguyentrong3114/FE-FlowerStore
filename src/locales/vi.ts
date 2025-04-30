@@ -51,6 +51,36 @@ const vi = {
     followus: "Theo dõi chúng tôi",
     allrightsreserved: "Tất cả quyền được bảo lưu.",
     languages: "Tiếng Việt",
+
+    // Home
+    badge: "Phiên bản mới ra mắt",
+    titleLine1: "Hương thơm đẳng cấp",
+    titleHighlight: "cho phong cách riêng",
+    description:
+        "Khám phá chai nước hoa mang đến sự quyến rũ và tự tin suốt cả ngày. Tinh tế, độc đáo, và khó quên.",
+    cta: "Mua ngay",
+    learnMore: "Tìm hiểu thêm",
+
+    //Become a member
+    becomeVip: "TRỞ THÀNH HỘI VIÊN VIP",
+    vipDescription: "Cập nhật sản phẩm mới, mẹo nước hoa và ưu đãi đặc biệt.",
+    signUp: "ĐĂNG KÝ",
+    alreadyVip: "Đã là VIP? Đăng nhập",
+  
+    flexiblePayment: "LỰA CHỌN THANH TOÁN LINH HOẠT",
+    interestFree: "Không tính lãi.",
+    klarnaText: "Trả góp 3 kỳ hoặc sau 30 ngày",
+    clearpayText: "Trả trong 4 lần, mỗi 2 tuần",
+    paypalText: "Trả góp 3 kỳ",
+    terms: "Áp dụng điều khoản và điều kiện.",
+  
+    trustTitle: "MỌI NGƯỜI ĐÁNH GIÁ CHÚNG TÔI",
+    trustRating: "Được đánh giá trên Trustpilot",
+    securePayment: "Thanh toán an toàn",
+    realPerfumePartner: "Đối tác nước hoa thật sự",
+    realPerfumeDescription :
+        "Chúng tôi cam kết cung cấp nước hoa chính hãng, chất lượng cao với giá cả hợp lý. Mỗi sản phẩm đều được kiểm tra kỹ lưỡng để đảm bảo bạn nhận được trải nghiệm tốt nhất.",
+
 };
 
 export default vi;
