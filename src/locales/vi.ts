@@ -43,6 +43,14 @@ const vi = {
     products: "Sản phẩm",
     services: "Dịch vụ",
     contact: "Liên hệ",
+    perfumeformale: "Nước hoa cho nam",
+    perfumeforfemale: "Nước hoa cho nữ",
+
+    // Footer
+    quicklinks: "Liên kết nhanh",
+    followus: "Theo dõi chúng tôi",
+    allrightsreserved: "Tất cả quyền được bảo lưu.",
+    languages: "Tiếng Việt",
 };
 
 export default vi;

@@ -2,19 +2,20 @@
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import DropdownMenu from './DropdownMenu';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ShoppingCart } from 'lucide-react';
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState<boolean>(false);
-
-  const {t} = useLanguage();
+  const { t } = useLanguage();
+  const router = useRouter();  
 
   useEffect(() => {
     setMounted(true);
-    
   }, []);
 
   if (!mounted) return null;
@@ -22,6 +23,10 @@ const Navbar = () => {
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
     console.log('Current theme:', theme);
+  };
+
+  const goToCart = () => {
+    router.push('/cart');  
   };
 
   return (
@@ -41,51 +46,46 @@ const Navbar = () => {
           </li>
           <li>
             <a href="#about" className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
-            {t('about')}
+              {t('about')}
             </a>
           </li>
           <DropdownMenu
             links={[
-              { text: "", href: "#profile" },
-              { text: "Settings", href: "#settings" },
+              { text: t('perfumeformale'), href: "#male" },
+              { text: t('perfumeforfemale'), href: "female" },
               { text: "Logout", href: "#logout" },
-            ]}>
+            ]}
+          >
             {t('products')}
           </DropdownMenu>
           <li>
             <a href="#services" className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
-            {t('services')}
+              {t('services')}
             </a>
           </li>
           <li>
             <a href="#contact" className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
-            {t('contact')}
+              {t('contact')}
             </a>
           </li>
-          {/* <li>
-            <DropdownMenu
-              links={[
-                { text: "Profile", href: "#profile" },
-                { text: "Settings", href: "#settings" },
-                { text: "Logout", href: "#logout" },
-              ]}
-            />
-          </li> */}
         </ul>
 
         {/* Actions */}
         <div className="flex items-center space-x-3">
           <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm">
-          {t('login')}
+            {t('login')}
           </button>
 
-          <button
-            onClick={toggleTheme}
-            className=""
-          >
+          <LanguageSwitcher />
+          <button onClick={toggleTheme} className="">
             {theme === 'dark' ? <Moon color='yellow' /> : <Sun color='gray' />}
           </button>
-          <LanguageSwitcher />
+          
+          {/* Giỏ hàng */}
+          <button onClick={goToCart}>
+            {theme === 'dark' ? <ShoppingCart color='yellow' /> : <ShoppingCart color='gray' />}
+          </button>
+
         </div>
       </nav>
     </header>

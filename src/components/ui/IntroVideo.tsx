@@ -6,13 +6,12 @@ interface IntroVideoProps {
   altText?: string;
 }
 
-const IntroVideo: React.FC<IntroVideoProps> = ({ videoUrl, poster }) => {
+const IntroVideo: React.FC<IntroVideoProps> = ({ videoUrl }) => {
   return (
     <div className="relative rounded-2xl overflow-hidden shadow-lg">
       <video
         className="w-full h-auto"
         src={videoUrl}
-        poster={poster}
         autoPlay
         muted
         loop

@@ -1,5 +1,7 @@
 // src/messages/en.ts
 
+
+
 const en = {
     greeting: "Hello!",
     welcome: "Welcome to our store",
@@ -34,13 +36,19 @@ const en = {
     // Success messages
     loginSuccess: "You have successfully logged in.",
     registerSuccess: "Registration completed successfully.",
-
     // Navbar
     home: "Home",
     about: "About",
     products: "Products",
     services: "Services",
     contact: "Contact",
+    perfumeformale: "Fragrance for Him",
+    perfumeforfemale: "Fragrance for Her",
+    //Footer
+    quicklinks: "Quick Links",
+    followus: "Follow Us",
+    allrightsreserved: "All rights reserved.",
+    languages: "English",
   };
   
   export default en;

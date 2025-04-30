@@ -14,10 +14,14 @@ export default function LanguageSelector() {
       <select
         value={locale}
         onChange={handleChange}
-        className="border border-gray-300 rounded px-3 py-2"
+        className="border border-gray-700 rounded px-3 py-2"
       >
-        <option value="en">English</option>
-        <option value="vi">Tiếng Việt</option>
+        <option value="en" className="">
+          English
+        </option>
+        <option value="vi" className="">
+          Tiếng Việt
+        </option>
       </select>
     </div>
   );
