@@ -5,6 +5,7 @@ import Brand from "@/components/ui/Brand";
 import Collections from "@/components/ui/Collections";
 import InfiniteCommentColumn from "@/components/ui/CommentRow";
 import IntroVideo from "@/components/ui/IntroVideo";
+import TextBoxList from "@/components/base/TextBoxList";
 import { useLanguage } from "@/contexts/LanguageContext";
 import React from "react";
 
@@ -88,6 +89,7 @@ export default function Home() {
         </h2>
       </div>
       <Brand />
+      <TextBoxList />
       <Collections />
       <section className="max-w-7xl mx-auto px-4 py-16 text-center">
         <div className="mb-8">

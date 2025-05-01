@@ -34,12 +34,12 @@ export default function Banner() {
         </div>
 
 
-        <div className="mt-16 md:mt-0 md:w-1/2 flex justify-center">
+        <div className="mt-16 md:mt-0 md:w-1/2 flex justify-center py-2">
           <Image
             src="/img/perfume3.png"
             alt="Perfume Bottle"
-            width={400}
-            height={400}
+            width={250}
+            height={250}
             className="object-contain"
             priority
           />

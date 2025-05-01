@@ -1,10 +1,10 @@
-// src/components/Collections.tsx
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import ProductCard from './ProductCard';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ArrowRightLeft, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const products = [
     {
@@ -14,6 +14,7 @@ const products = [
         price: '$89.99',
         imageUrl:
             'https://kenperfume.com/wp-content/uploads/2024/10/Con-ten-16.png',
+        rating: 4.5,
     },
     {
         title: 'AM PERFUME – Floral Fantasy',
@@ -22,6 +23,7 @@ const products = [
         price: '$79.99',
         imageUrl:
             'https://kenperfume.com/wp-content/uploads/2024/10/Con-ten-16.png',
+        rating: 4.5,
     },
     {
         title: 'AM PERFUME – Citrus Burst',
@@ -30,83 +32,59 @@ const products = [
         price: '$69.99',
         imageUrl:
             'https://kenperfume.com/wp-content/uploads/2024/10/Con-ten-16.png',
+        rating: 4.5,
     },
 ];
 
 const Collections: React.FC = () => {
     const { t } = useLanguage();
-    const [showExtra, setShowExtra] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
 
-    const toggleShow = () => setShowExtra(prev => !prev);
+    // Function to check scroll position
+    const handleScroll = () => {
+        const scrollPosition = window.scrollY;
+        const scrollThreshold = 300; // You can adjust the threshold to trigger the motion effect
+
+        if (scrollPosition > scrollThreshold) {
+            setScrolled(true);
+        } else {
+            setScrolled(false);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
 
     return (
-        
-        <section className="p-4 rounded-2xl">
-            {/* Header with navigation */}
-            <div className="flex items-center justify-between mb-4">
-                <h1 className="text-3xl font-extrabold">
-                    {t('newcollections')}
-                </h1>
-                {/* View All button navigates to /collections page */}
-                <Link
-                    href="/collections"
-                    className="text-lg font-medium text-blue-600 hover:text-blue-800 flex items-center"
+        <div>
+            <div className="flex flex-col items-center justify-center py-10">
+                <h2 className="text-3xl font-bold mb-4">{t('newcollections')}</h2>
+                <motion.div
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-screen-xl px-4"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: scrolled ? 1 : 0, y: scrolled ? 0 : 50 }}
+                    transition={{ duration: 0.5 }}
                 >
-                    {t('viewall')}<ArrowRight className="w-5 h-5 ml-1" />
+                    {products.map((product, index) => (
+                        <ProductCard
+                            key={index}
+                            title={product.title}
+                            price={product.price}
+                            imageUrl={product.imageUrl}
+                            rating={product.rating}
+                        />
+                    ))}
+                </motion.div>
+                <Link href="/products" className="mt-6 text-blue-500 flex items-center">
+                    {t('viewall')}
+                    <ArrowRight className="ml-2" />
                 </Link>
             </div>
-
-            {/* Main display: first product + toggle button */}
-            <div className="flex flex-wrap gap-6 items-start relative">
-                <div className="relative w-full sm:w-[48%] lg:w-[32%]">
-                    <ProductCard
-                        title={products[0].title}
-                        description={products[0].description}
-                        price={products[0].price}
-                        imageUrl={products[0].imageUrl}
-                        onBuy={() => alert(`Added ${products[0].title} to cart!`)}
-                    />
-                   
-                    <button
-                        onClick={toggleShow}
-                        className="absolute top-1/2 right-4 -translate-y-1/2 p-3 rounded-full shadow-lg transition-colors flex items-center justify-center"
-                    >
-                        <ArrowRightLeft
-                            size={40}
-                            className={`transition-colors ${showExtra ? 'text-blue-600' : 'text-gray-600 dark:text-gray-300'}`}
-                        />
-                    </button>
-                </div>
-
-                {/* Extra products slide in from right */}
-                {showExtra && (
-                    <div className="flex flex-wrap gap-6 animate-slide-in-right">
-                        {products.slice(1).map(product => (
-                            <div key={product.title} className="w-full sm:w-[48%] lg:w-[32%]">
-                                <ProductCard
-                                    title={product.title}
-                                    description={product.description}
-                                    price={product.price}
-                                    imageUrl={product.imageUrl}
-                                    onBuy={() => alert(`Added ${product.title} to cart!`)}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {/* Animation CSS */}
-                <style jsx>{`
-                    @keyframes slideInRight {
-                        from { transform: translateX(50px); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                    .animate-slide-in-right {
-                        animation: slideInRight 0.5s ease-out;
-                    }
-                `}</style>
-            </div>
-        </section>
+        </div>
     );
 };
 
