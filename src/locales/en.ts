@@ -59,8 +59,10 @@ const en = {
     "Discover the perfume that brings charm and confidence all day long. Sophisticated, distinctive, and unforgettable.",
   cta: "Shop Now",
   learnMore: "Learn More",
-
-
+  perfumeOverview: "Perfume Overview",
+  perfumeAtAGlance: "Perfume at a Glance",
+  explorePerfumes: "Explore the world of perfumes with premium scents designed to elevate your personal style and confidence.",
+  showmore: "Show more",
   //Become a member
   becomeVip: "BECOME A VIP",
   vipDescription: "Stay updated with launches, tips, and get exclusive discounts.",

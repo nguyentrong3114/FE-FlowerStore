@@ -2,21 +2,18 @@
 
 interface IntroVideoProps {
   videoUrl: string;
-  poster?: string;
-  altText?: string;
 }
 
 const IntroVideo: React.FC<IntroVideoProps> = ({ videoUrl }) => {
   return (
-    <div className="relative rounded-2xl overflow-hidden shadow-lg">
+    <div className="relative w-full h-screen overflow-hidden">
       <video
-        className="w-full h-auto"
+        className="absolute top-0 left-0 w-full h-full object-cover"
         src={videoUrl}
         autoPlay
         muted
         loop
         playsInline
-        controls
       >
         Your browser does not support the video tag.
       </video>

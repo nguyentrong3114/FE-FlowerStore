@@ -27,7 +27,7 @@ export default function Banner() {
             </Link>
             <Link href="#">
               <span className="flex items-center text-base font-medium  transition cursor-pointer">
-                {t("learnMore")} <span className="ml-2">→</span>
+                {t("showmore")} <span className="ml-2">→</span>
               </span>
             </Link>
           </div>
@@ -40,8 +40,6 @@ export default function Banner() {
             alt="Perfume Bottle"
             width={250}
             height={250}
-            className="object-contain"
-            priority
           />
         </div>
 

@@ -1,39 +1,46 @@
 'use client';
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  ReactNode,
+} from 'react';
+
 import en from '@/locales/en';
 import vi from '@/locales/vi';
 
 export type Language = 'en' | 'vi';
 const translations = { en, vi };
 
-type TranslationKey = keyof typeof en; // assuming en and vi have the same structure
+type TranslationKey = keyof typeof en;
 
-const LanguageContext = createContext<{
+type LanguageContextType = {
   locale: Language;
   setLocale: (locale: Language) => void;
   t: (key: TranslationKey) => string;
-}>({
+};
+
+const LanguageContext = createContext<LanguageContextType>({
   locale: 'en',
   setLocale: () => {},
   t: (key) => en[key],
 });
 
-export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocale] = useState<Language>('en');
 
-  const t = (key: TranslationKey) => translations[locale][key];
-
-  useEffect(() => {
-    const stored = localStorage.getItem('locale') as Language;
-    if (stored) setLocale(stored);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('locale', locale);
+  const t = useMemo(() => {
+    return (key: TranslationKey) => translations[locale][key];
   }, [locale]);
 
+  const contextValue = useMemo(
+    () => ({ locale, setLocale, t }),
+    [locale, t]
+  );
+
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, t }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );

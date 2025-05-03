@@ -60,6 +60,10 @@ const vi = {
         "Khám phá chai nước hoa mang đến sự quyến rũ và tự tin suốt cả ngày. Tinh tế, độc đáo, và khó quên.",
     cta: "Mua ngay",
     learnMore: "Tìm hiểu thêm",
+    perfumeOverview: "Tổng Quan ",
+    perfumeAtAGlance: "AM Perfume",
+    explorePerfumes: "Khám phá thế giới nước hoa với những hương thơm cao cấp giúp nâng tầm phong cách và sự tự tin của bạn.",
+    showmore: "Xem thêm",
 
     //Become a member
     becomeVip: "TRỞ THÀNH HỘI VIÊN VIP",

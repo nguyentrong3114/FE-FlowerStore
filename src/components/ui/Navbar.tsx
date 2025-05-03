@@ -1,11 +1,11 @@
 'use client';
 
-import { Moon, Sun, ShoppingCart } from 'lucide-react';
+import { Moon, Sun, User, ShoppingCart } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import DropdownMenu from './DropdownMenu';
-import LanguageSwitcher from './LanguageSwitcher';
+
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Navbar = () => {
@@ -15,25 +15,49 @@ const Navbar = () => {
   const router = useRouter();
 
   const [showNavbar, setShowNavbar] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isTransparent, setIsTransparent] = useState(true);
+  const lastScrollY = useRef(0);
+  const timeoutId = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > lastScrollY) {
-        setShowNavbar(false); // Scroll down → hide
+      const currentY = window.scrollY;
+
+      if (currentY > lastScrollY.current) {
+        if (showNavbar) setShowNavbar(false);
       } else {
-        setShowNavbar(true); // Scroll up → show
+        if (currentY === 0) {
+          if (timeoutId.current) {
+            clearTimeout(timeoutId.current);
+            timeoutId.current = null;
+          }
+          if (!showNavbar) setShowNavbar(true);
+        } else {
+          if (timeoutId.current) clearTimeout(timeoutId.current);
+          timeoutId.current = setTimeout(() => {
+            setShowNavbar(true);
+            timeoutId.current = null;
+          }, 1000);
+        }
       }
-      setLastScrollY(currentScrollY);
+
+      lastScrollY.current = currentY;
+
+      if (currentY < 800) {
+        setIsTransparent(true);
+      } else {
+        setIsTransparent(false);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (timeoutId.current) clearTimeout(timeoutId.current);
+    };
+  }, [showNavbar]);
 
   if (!mounted) return null;
 
@@ -47,62 +71,42 @@ const Navbar = () => {
 
   return (
     <header
-      className={`shadow-md fixed top-0 left-0 right-0  transition-transform duration-300 z-50 ${
-        showNavbar ? 'translate-y-0' : '-translate-y-full'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 shadow ${showNavbar ? 'translate-y-0' : '-translate-y-full'
+        } ${isTransparent ? 'bg-transparent' : 'bg-white dark:bg-neutral-900'}`}
     >
-      <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo */}
+      <nav className="container mx-auto px-4 py-3 flex items-center justify-between text-black dark:text-white">
+
+        {/* Logo & Theme Toggle */}
         <div className="text-2xl font-bold flex items-center space-x-2">
           <a href="#">AM PERFUME</a>
-          <button onClick={toggleTheme}>
+          <button onClick={toggleTheme} aria-label="Toggle theme">
             {theme === 'dark' ? <Moon color="yellow" /> : <Sun color="gray" />}
           </button>
         </div>
 
-        {/* Navigation */}
+        {/* Main Nav Links */}
         <ul className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          <li>
-            <a href="#home" className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
-              {t('home')}
-            </a>
-          </li>
-          <li>
-            <a href="#about" className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
-              {t('about')}
-            </a>
-          </li>
+          <li><a href="#home">{t('home')}</a></li>
+          <li><a href="#about">{t('about')}</a></li>
           <DropdownMenu
             links={[
-              { text: t('perfumeformale'), href: "#male" },
-              { text: t('perfumeforfemale'), href: "#female" },
-              { text: "Logout", href: "#logout" },
+              { text: t('perfumeformale'), href: '#male' },
+              { text: t('perfumeforfemale'), href: '#female' },
+              { text: 'Logout', href: '#logout' },
             ]}
           >
             {t('products')}
           </DropdownMenu>
-          <li>
-            <a href="#services" className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
-              {t('services')}
-            </a>
-          </li>
-          <li>
-            <a href="#contact" className="hover:text-blue-600 dark:hover:text-yellow-400 transition-colors">
-              {t('contact')}
-            </a>
-          </li>
+          <li><a href="#services">{t('services')}</a></li>
+          <li><a href="#contact">{t('contact')}</a></li>
         </ul>
 
         {/* Actions */}
         <div className="flex items-center space-x-3">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm">
-            {t('login')}
+          <button className="px-4 py-2 rounded-md text-sm">
+            {theme === 'dark' ? <User color="yellow" /> : <User color="gray" />}
           </button>
-
-          <LanguageSwitcher />
-
-
-          <button onClick={goToCart}>
+          <button onClick={goToCart} aria-label="Go to cart">
             {theme === 'dark' ? <ShoppingCart color="yellow" /> : <ShoppingCart color="gray" />}
           </button>
         </div>

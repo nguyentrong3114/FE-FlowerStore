@@ -1,16 +1,23 @@
 @import "tailwindcss";
 
 /* styles/globals.css */
-
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 :root {
   --background: #eeeeee;
   --foreground: #171717;
+
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Monsterat", sans-serif;
 }
 
 .dark {
@@ -20,9 +27,7 @@ body {
 .dark h1, .dark h2 {
   color: #ffd995;
 }
-/* {
-banner
-}*/
+
 .tile {
   width: 100%;
   height: 100%;
@@ -36,13 +41,12 @@ banner
     opacity: 0;
     transform: scale(1.1);
   }
-
   100% {
     opacity: 1;
     transform: scale(1);
   }
 }
-/**/
+
 .dark option {
   background-color: #171717;
   color: #ededed;
@@ -51,6 +55,7 @@ banner
   background-color: #171717;
   color: #ededed;
 }
+
 /* Light Mode */
 @media (prefers-color-scheme: light) {
   .banner {
@@ -64,4 +69,3 @@ banner
     background: radial-gradient(circle, rgba(30, 30, 40, 1) 0%, rgba(70, 70, 100, 1) 50%, rgba(0, 0, 40, 1) 100%);
   }
 }
-
