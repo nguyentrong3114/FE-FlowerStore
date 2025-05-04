@@ -70,21 +70,34 @@ const vi = {
     vipDescription: "Cập nhật sản phẩm mới, mẹo nước hoa và ưu đãi đặc biệt.",
     signUp: "ĐĂNG KÝ",
     alreadyVip: "Đã là VIP? Đăng nhập",
-  
+
     flexiblePayment: "LỰA CHỌN THANH TOÁN LINH HOẠT",
     interestFree: "Không tính lãi.",
     klarnaText: "Trả góp 3 kỳ hoặc sau 30 ngày",
     clearpayText: "Trả trong 4 lần, mỗi 2 tuần",
     paypalText: "Trả góp 3 kỳ",
     terms: "Áp dụng điều khoản và điều kiện.",
-  
+
     trustTitle: "MỌI NGƯỜI ĐÁNH GIÁ CHÚNG TÔI",
     trustRating: "Được đánh giá trên Trustpilot",
     securePayment: "Thanh toán an toàn",
     realPerfumePartner: "Đối tác nước hoa thật sự",
-    realPerfumeDescription :
+    realPerfumeDescription:
         "Chúng tôi cam kết cung cấp nước hoa chính hãng, chất lượng cao với giá cả hợp lý. Mỗi sản phẩm đều được kiểm tra kỹ lưỡng để đảm bảo bạn nhận được trải nghiệm tốt nhất.",
 
+    //About us
+    title: 'About AM Perfume',
+    subtitle: 'Founded in 1967 in Germany',
+    descriptionAboutUs: 'AM Perfume was born in the vibrant heart of Berlin in 1967, founded by visionary perfumer Anna Müller. Inspired by the post-war cultural revival, she aimed to craft scents that evoked both nostalgia and modernity. Over the decades, AM Perfume has become synonymous with timeless elegance, blending traditional German craftsmanship with bold, innovative ingredients. From its signature Amber Noir to the beloved Rose Dusk, AM Perfume continues to enchant fragrance lovers around the world.',
+    missionTitle: 'Our Mission',
+    missionDescription: 'To create fragrances that tell a story — a story of passion, artistry, and heritage. Each bottle is a testament to our dedication to quality and the pursuit of olfactory excellence.',
+    milestones: [
+        { year: 1967, event: 'Founded in Berlin, Germany by Anna Müller' },
+        { year: 1975, event: 'Launched first signature scent: Amber Noir' },
+        { year: 1988, event: 'Expanded to international markets' },
+        { year: 2000, event: 'Opened flagship boutique in Paris' },
+        { year: 2015, event: 'Won International Fragrance Award for Rose Dusk' },
+    ],
 };
 
 export default vi;

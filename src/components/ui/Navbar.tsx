@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import DropdownMenu from './DropdownMenu';
 
 import { useLanguage } from '@/contexts/LanguageContext';
+import Link from 'next/link';
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -15,7 +16,6 @@ const Navbar = () => {
   const router = useRouter();
 
   const [showNavbar, setShowNavbar] = useState(true);
-  const [isTransparent, setIsTransparent] = useState(true);
   const lastScrollY = useRef(0);
   const timeoutId = useRef<NodeJS.Timeout | null>(null);
 
@@ -44,12 +44,6 @@ const Navbar = () => {
       }
 
       lastScrollY.current = currentY;
-
-      if (currentY < 800) {
-        setIsTransparent(true);
-      } else {
-        setIsTransparent(false);
-      }
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -71,11 +65,11 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 shadow ${showNavbar ? 'translate-y-0' : '-translate-y-full'
-        } ${isTransparent ? 'bg-transparent' : 'bg-white dark:bg-neutral-900'}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        showNavbar ? 'translate-y-0' : '-translate-y-full'
+      } bg-transparent backdrop-blur-lg`} // 👈 luôn trong suốt + blur
     >
-      <nav className="container mx-auto px-4 py-3 flex items-center justify-between text-black dark:text-white">
-
+      <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo & Theme Toggle */}
         <div className="text-2xl font-bold flex items-center space-x-2">
           <a href="#">AM PERFUME</a>
@@ -86,8 +80,8 @@ const Navbar = () => {
 
         {/* Main Nav Links */}
         <ul className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          <li><a href="#home">{t('home')}</a></li>
-          <li><a href="#about">{t('about')}</a></li>
+          <li><Link href="/">{t('home')}</Link></li>
+          <li><Link href="/aboutus">{t('about')}</Link></li>
           <DropdownMenu
             links={[
               { text: t('perfumeformale'), href: '#male' },

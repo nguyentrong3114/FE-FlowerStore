@@ -80,6 +80,20 @@ const en = {
   trustRating: "Rated on Trustpilot",
   realPerfumePartner: "Your real perfume partner",
   realPerfumeDescription: "AM PERFUME is a perfume brand that specializes in creating high-quality, luxurious fragrances. Our perfumes are designed to evoke emotions and create lasting memories. We believe that fragrance is an essential part of personal expression and we strive to provide our customers with the best possible experience.",
+  //About us
+  title: 'About AM Perfume',
+  subtitle: 'Founded in 1967 in Germany',
+  descriptionAboutUs: 'AM Perfume was born in the vibrant heart of Berlin in 1967, founded by visionary perfumer Anna Müller. Inspired by the post-war cultural revival, she aimed to craft scents that evoked both nostalgia and modernity. Over the decades, AM Perfume has become synonymous with timeless elegance, blending traditional German craftsmanship with bold, innovative ingredients. From its signature Amber Noir to the beloved Rose Dusk, AM Perfume continues to enchant fragrance lovers around the world.',
+  missionTitle: 'Our Mission',
+  missionDescription: 'To create fragrances that tell a story — a story of passion, artistry, and heritage. Each bottle is a testament to our dedication to quality and the pursuit of olfactory excellence.',
+  milestones: [
+    { year: 1967, event: 'Founded in Berlin, Germany by Anna Müller' },
+    { year: 1975, event: 'Launched first signature scent: Amber Noir' },
+    { year: 1988, event: 'Expanded to international markets' },
+    { year: 2000, event: 'Opened flagship boutique in Paris' },
+    { year: 2015, event: 'Won International Fragrance Award for Rose Dusk' },
+  ],
+
 };
 
 export default en;

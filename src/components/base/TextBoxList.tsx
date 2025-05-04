@@ -57,7 +57,11 @@ const TextPageSections: React.FC = () => {
       {texts.map((item, index) => (
         <div
           key={index}
-          ref={(el) => el && (sectionsRef.current[index] = el)}
+          ref={(el) => {
+            if (el) {
+              sectionsRef.current[index] = el;
+            }
+          }}
           className="p-8 rounded-xl shadow-xl text-xl text-center flex items-center border"
         >
           {item.icon}

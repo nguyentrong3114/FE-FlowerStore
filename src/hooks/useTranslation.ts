@@ -5,3 +5,4 @@ export default function useTranslation() {
   const { t } = useLanguage();
   return t;
 }
+
