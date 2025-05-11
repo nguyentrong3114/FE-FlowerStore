@@ -3,7 +3,6 @@
 import { Moon, Sun, User, ShoppingCart } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import DropdownMenu from './DropdownMenu';
 
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -13,7 +12,6 @@ const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const { t } = useLanguage();
-  const router = useRouter();
 
   const [showNavbar, setShowNavbar] = useState(true);
   const lastScrollY = useRef(0);
@@ -59,20 +57,17 @@ const Navbar = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  const goToCart = () => {
-    router.push('/cart');
-  };
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         showNavbar ? 'translate-y-0' : '-translate-y-full'
-      } bg-transparent backdrop-blur-lg`} // 👈 luôn trong suốt + blur
+      } bg-transparent backdrop-blur-lg`}
     >
       <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo & Theme Toggle */}
         <div className="text-2xl font-bold flex items-center space-x-2">
-          <a href="#">AM PERFUME</a>
+          <Link href="/">AM PERFUME</Link>
           <button onClick={toggleTheme} aria-label="Toggle theme">
             {theme === 'dark' ? <Moon color="yellow" /> : <Sun color="gray" />}
           </button>
@@ -84,25 +79,25 @@ const Navbar = () => {
           <li><Link href="/aboutus">{t('about')}</Link></li>
           <DropdownMenu
             links={[
-              { text: t('perfumeformale'), href: '#male' },
-              { text: t('perfumeforfemale'), href: '#female' },
+              { text: t('perfumeformale'), href: '/perfume/forhim' },
+              { text: t('perfumeforfemale'), href: '/perfume/forher' },
               { text: 'Logout', href: '#logout' },
             ]}
           >
             {t('products')}
           </DropdownMenu>
-          <li><a href="#services">{t('services')}</a></li>
-          <li><a href="#contact">{t('contact')}</a></li>
+          <li><Link href="/services">{t('services')}</Link></li>
+          <li><Link href="/contact">{t('contact')}</Link></li>
         </ul>
 
         {/* Actions */}
         <div className="flex items-center space-x-3">
-          <button className="px-4 py-2 rounded-md text-sm">
+          <Link href="/me" className="px-4 py-2 rounded-md text-sm">
             {theme === 'dark' ? <User color="yellow" /> : <User color="gray" />}
-          </button>
-          <button onClick={goToCart} aria-label="Go to cart">
+          </Link>
+          <Link href="/cart" aria-label="Go to cart">
             {theme === 'dark' ? <ShoppingCart color="yellow" /> : <ShoppingCart color="gray" />}
-          </button>
+          </Link>
         </div>
       </nav>
     </header>

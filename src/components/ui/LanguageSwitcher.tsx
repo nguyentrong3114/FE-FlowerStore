@@ -1,7 +1,7 @@
 'use client';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export default function LanguageSelector() {
+export default function LanguageSwitcher() {
   const { locale, setLocale } = useLanguage();
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

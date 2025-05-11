@@ -6,7 +6,7 @@ export default function Light() {
 
     return (
         <>
-            <div className="relative overflow-hidden">
+            <div className="relative mt-2 overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none flex items-start justify-center z-0">
                     <div
                         className="w-[50vw] h-[40vh]"
@@ -27,7 +27,7 @@ export default function Light() {
 
 
 
-                <div className="absolute top-3 left-0 w-full z-10 flex justify-center items-center">
+                <div className="absolute top-3 left-0 w-full z-10 flex justify-center items-center mt-2">
                     <div className="h-2 w-[50vw] bg-[#eeeeee] rounded-full blur-sm transition" />
                     <div className="absolute bg-[#eeeeee] blur-2xl opacity-100 rounded-full" />
                 </div>

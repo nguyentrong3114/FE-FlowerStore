@@ -1,6 +1,8 @@
+"use client";
 import React from 'react';
 import Link from 'next/link';
 
+import LanguageSwitcher from './LanguageSwitcher';
 const Footer = () => {
   return (
     <footer className="mx-4 border shadow-md px-8 py-10 my-10 rounded-md">
@@ -20,15 +22,6 @@ const Footer = () => {
             <p className="text-red-500 text-xs">E-mail is required</p>
             <button className="bg-gray-800 text-white px-4 py-2 rounded w-fit">Subscribe</button>
           </form>
-
-          {/* Accessibility */}
-          <div className="mt-4 flex items-center gap-2">
-            <span className="text-xs">Accessibility : Better contrast</span>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" />
-              <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:bg-gray-600 transition-all duration-300"></div>
-            </label>
-          </div>
         </div>
 
         {/* AM PERFUME Stores */}
@@ -83,7 +76,7 @@ const Footer = () => {
           <Link href="https://www.youtube.com/">YouTube</Link>
         </div>
         <div className="mt-4 md:mt-0 flex items-center gap-2">
-          <span className="font-medium text-gray-700">34 Nguyễn Sáng</span>
+          <LanguageSwitcher />
         </div>
       </div>
 
