@@ -29,14 +29,14 @@ const ScrollPicture: React.FC = () => {
           {imageItems.map((item, index) => (
             <div
               key={index}
-              className="flex-shrink-0 w-[300px] md:w-[500px] overflow-hidden rounded-lg"
+              className="relative flex-shrink-0 w-[300px] md:w-[500px] aspect-[5/8] overflow-hidden rounded-lg"
             >
               <Image
                 src={item.src}
                 alt={item.alt}
-                width={500}
-                height={800}
-                className="object-cover w-full h-auto"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover object-center rounded-lg"
               />
             </div>
           ))}

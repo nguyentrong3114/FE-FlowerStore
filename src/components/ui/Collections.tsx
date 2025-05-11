@@ -71,7 +71,9 @@ const Collections: React.FC = () => {
                 >
                     {products.map((product, index) => (
                         <ProductCard
+
                             key={index}
+                            id={index.toString()}
                             title={product.title}
                             price={product.price}
                             imageUrl={product.imageUrl}
