@@ -3,23 +3,24 @@
 import { Moon, Sun, User, ShoppingCart } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState, useRef } from 'react';
-import DropdownMenu from './DropdownMenu';
-
-import { useLanguage } from '@/contexts/LanguageContext';
 import Link from 'next/link';
+import { LogOut } from 'lucide-react';
+import DropdownMenu from './DropdownMenu';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';  
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const { t } = useLanguage();
+  const { user, loading, logout } = useAuth();
 
+  const [mounted, setMounted] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const lastScrollY = useRef(0);
   const timeoutId = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
-
     const handleScroll = () => {
       const currentY = window.scrollY;
 
@@ -57,7 +58,6 @@ const Navbar = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -81,7 +81,7 @@ const Navbar = () => {
             links={[
               { text: t('perfumeformale'), href: '/perfume/forhim' },
               { text: t('perfumeforfemale'), href: '/perfume/forher' },
-              { text: 'Logout', href: '#logout' },
+              { text: 'Unisex', href: '/perfume/forunisex', }
             ]}
           >
             {t('products')}
@@ -92,9 +92,18 @@ const Navbar = () => {
 
         {/* Actions */}
         <div className="flex items-center space-x-3">
-          <Link href="/me" className="px-4 py-2 rounded-md text-sm">
-            {theme === 'dark' ? <User color="yellow" /> : <User color="gray" />}
-          </Link>
+          {loading ? null : user ? (
+            <Link href="/me" className="px-4 py-2 rounded-md text-sm">
+              {theme === 'dark' ? <User color="yellow" /> : <User color="gray" />}
+            </Link>
+          ) : (
+            <Link
+              href="/auth/login"
+              className="text-sm font-medium px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            >
+              Login
+            </Link>
+          )}
           <Link href="/cart" aria-label="Go to cart">
             {theme === 'dark' ? <ShoppingCart color="yellow" /> : <ShoppingCart color="gray" />}
           </Link>

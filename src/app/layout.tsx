@@ -7,6 +7,7 @@ import ScrollToTopButton from "@/components/ui/ScrollTopButton";
 import Footer from "@/components/ui/Footer";
 import { Noto_Sans_Balinese } from "next/font/google";
 import ClientOnly from "@/components/base/ClientOnly";
+import { AuthProvider } from "@/contexts/AuthContext";
 // Import phông chữ
 const notoSans = Noto_Sans_Balinese({
   variable: "--font-sans",
@@ -26,7 +27,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${notoSans.variable} antialiased`}>
-        {/* Chỉ dùng ThemeProvider bao ngoài khi bạn không cần nội dung trong server-render */}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -34,13 +34,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
-            {/* Các component sử dụng useTheme hoặc cần window phải đợi mount */}
-            <ClientOnly>
-              <Navbar />
-              <ScrollToTopButton />
-            </ClientOnly>
-            {children}
-            <Footer />
+            <AuthProvider>
+              <ClientOnly>
+                <Navbar />
+                <ScrollToTopButton />
+              </ClientOnly>
+              {children}
+              <Footer />
+            </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>
