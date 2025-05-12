@@ -45,7 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <>
       <div className="max-w-sm rounded-2xl shadow-xl overflow-hidden transform transition-all hover:scale-105 group ring-1 relative">
         {/* Hình ảnh */}
-        <Link href={`/product/${id}`}>
+        <Link href={`/perfume/forhim/${id}`}>
           <div className="relative h-64 w-full overflow-hidden">
             <Image
               src={imageUrl}
@@ -60,7 +60,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Nội dung */}
         <div className="p-7">
-          <Link href={`/product/${id}`}>
+          <Link href={`/perfume/forhim/${id}`}>
             <h2 className="text-xl font-bold mb-2 hover:opacity-80 transition-colors">{title}</h2>
           </Link>
 
