@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "kenperfume.com",
       },
+      {
+        protocol: 'https',
+        hostname: 'product.hstatic.net',
+      },
     ],
   },
 };

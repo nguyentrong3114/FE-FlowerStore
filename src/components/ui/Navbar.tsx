@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { LogOut } from 'lucide-react';
 import DropdownMenu from './DropdownMenu';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useAuth } from '@/contexts/AuthContext';  
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -60,9 +60,8 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        showNavbar ? 'translate-y-0' : '-translate-y-full'
-      } bg-transparent backdrop-blur-lg`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'
+        } bg-transparent backdrop-blur-lg`}
     >
       <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo & Theme Toggle */}
@@ -79,9 +78,9 @@ const Navbar = () => {
           <li><Link href="/aboutus">{t('about')}</Link></li>
           <DropdownMenu
             links={[
-              { text: t('perfumeformale'), href: '/perfume/forhim' },
-              { text: t('perfumeforfemale'), href: '/perfume/forher' },
-              { text: 'Unisex', href: '/perfume/forunisex', }
+              { text: 'All', href: '/products', },
+              { text: t('perfumeformale'), href: '/products/forhim' },
+              { text: t('perfumeforfemale'), href: '/products/forher' },
             ]}
           >
             {t('products')}
@@ -93,13 +92,18 @@ const Navbar = () => {
         {/* Actions */}
         <div className="flex items-center space-x-3">
           {loading ? null : user ? (
-            <Link href="/me" className="px-4 py-2 rounded-md text-sm">
-              {theme === 'dark' ? <User color="yellow" /> : <User color="gray" />}
-            </Link>
+            <>
+              <Link href="/me" className="rounded-md text-sm">
+                {theme === 'dark' ? <User color="yellow" /> : <User color="gray" />}
+              </Link>
+              <button className='-md text-sm' onClick={logout} aria-label="Logout">
+              {theme === 'dark' ? <LogOut color="yellow" /> : <LogOut color="gray" />}
+              </button>
+            </>
           ) : (
             <Link
               href="/auth/login"
-              className="text-sm font-medium px-4 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="text-sm font-medium px-4 py-2 border rounded-md hover:bg-blue-500 transition"
             >
               Login
             </Link>

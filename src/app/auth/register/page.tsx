@@ -5,14 +5,20 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
+import { UserService } from '@/services/user.service';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
         password: '',
-        confirmPassword: '',
+        confirmPassword: ''
     });
+
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -22,9 +28,40 @@ export default function RegisterPage() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Xử lý logic đăng ký ở đây
+        setError('');
+        setSuccessMessage('');
+
+        if (formData.password !== formData.confirmPassword) {
+            setError('Mật khẩu xác nhận không khớp');
+            return;
+        }
+
+        try {
+            const response = await UserService.register({
+                name: formData.fullName,
+                email: formData.email,
+                password: formData.password
+            });
+
+            if (response.status === 200) {
+                setSuccessMessage('Đăng ký thành công! Đang chuyển hướng...');
+                setTimeout(() => {
+                    router.push('/auth/login');
+                }, 2000);
+            }
+        } catch (error: any) {
+            console.error('Đăng ký thất bại:', error);
+
+            // Nếu có response từ server
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                setError('Đăng ký thất bại. Vui lòng thử lại.');
+            }
+        }
+
     };
 
     const handleGoogleRegister = () => {
@@ -86,6 +123,17 @@ export default function RegisterPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
+
+                    {successMessage && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm text-center"
+                        >
+                            {successMessage}
+                        </motion.div>
+                    )}
+
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -161,7 +209,15 @@ export default function RegisterPage() {
                             required
                         />
                     </motion.div>
-
+                    {error && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm text-center"
+                        >
+                            {error}
+                        </motion.div>
+                    )}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -176,6 +232,7 @@ export default function RegisterPage() {
                             </button>
                         </div>
                     </motion.div>
+
                 </form>
 
                 <motion.div

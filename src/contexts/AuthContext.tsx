@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { UserService } from '@/services/user.service';
 import { AuthService } from '@/services/auth.service';
 
 interface AuthContextType {
@@ -18,13 +17,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    UserService.getProfile()
+    AuthService.isLogin()
       .then(res => {
         console.log("Profile loaded", res.data); 
         setUser(res.data);
       })
       .catch(err => {
-        console.error("Lỗi khi gọi /me:", err);
+        console.error("Lỗi khi gọi /session:", err);
         setUser(null);
       })
       .finally(() => setLoading(false));

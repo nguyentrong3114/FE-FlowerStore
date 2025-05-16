@@ -7,8 +7,11 @@ import QuickViewModal from './QuickViewModal';
 interface ProductCardProps {
   id: string;
   title: string;
-  price: string;
   imageUrl: string;
+  brand: string;
+  notes: string[];
+  priceMin: number;
+  priceMax: number;
   rating?: number;
   description?: string;
 }
@@ -16,8 +19,10 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({
   id,
   title,
-  price,
   imageUrl,
+  brand,
+  priceMin,
+  priceMax,
   rating = 0,
   description,
 }) => {
@@ -48,7 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <Link href={`/perfume/forhim/${id}`}>
           <div className="relative h-64 w-full overflow-hidden">
             <Image
-              src={imageUrl}
+              src={imageUrl || "/img/product/404image.webp"}
               alt={title}
               sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
               fill
@@ -60,8 +65,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Nội dung */}
         <div className="p-7">
-          <Link href={`/perfume/forhim/${id}`}>
+          <Link href={`/perfume/forher/${id}`}>
             <h2 className="text-xl font-bold mb-2 hover:opacity-80 transition-colors">{title}</h2>
+            <p className="text-sm text-gray-600">{brand}</p>
           </Link>
 
           {/* Hiển thị sao */}
@@ -80,7 +86,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="relative h-12">
             {/* Giá tiền */}
             <div className="absolute inset-0 flex items-center justify-between transition-all duration-300 group-hover:opacity-0 group-hover:-translate-y-4">
-              <span className="text-2xl font-semibold">{price}</span>
+              <span className="text-2xl font-semibold">
+                {(priceMin && priceMax) ? (
+                  priceMin === priceMax ? `$${priceMin}` : `$${priceMin} - $${priceMax}`
+                ) : (
+                  "Liên hệ"
+                )}
+              </span>
             </div>
 
             {/* Các nút chức năng */}
@@ -116,8 +128,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
         product={{
           id,
           title,
-          price,
+          priceMin,
+          priceMax,
           imageUrl,
+          brand,
           rating,
           description,
         }}

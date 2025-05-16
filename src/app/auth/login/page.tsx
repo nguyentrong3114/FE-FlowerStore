@@ -5,14 +5,27 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
-
+import { AuthService } from '@/services/auth.service';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const [error, setError] = useState('');
+    const { setUser } = useAuth();
+    const router = useRouter();
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Xử lý logic đăng nhập ở đây
+        try {
+            const response = await AuthService.login(email, password);
+            console.log(response.data);
+            setUser(response.data.fullName);
+            setError('');
+            router.push('/');
+        } catch (error: any) {
+            console.error('Đăng nhập thất bại:', error);
+            setError(error.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+        }
     };
 
     const handleGoogleLogin = () => {
@@ -68,9 +81,6 @@ export default function LoginPage() {
                     <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t"></div>
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white">Hoặc</span>
-                    </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -109,13 +119,22 @@ export default function LoginPage() {
                             required
                         />
                     </motion.div>
+                    {error && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm text-center"
+                    >
+                        {error}
+                    </motion.div>
+                )}
 
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.7 }}
                     >
-                        <div className='flex justify-center'> 
+                        <div className='flex justify-center'>
                             <button
                                 type="submit"
                                 className="w-1/2 py-2 px-4 rounded-md font-medium transition-all duration-300 hover:scale-105 border"

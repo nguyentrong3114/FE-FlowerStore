@@ -1,42 +1,45 @@
-// src/app/men-perfume/page.tsx
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
-import { useEffect, useState } from "react";
 import Image from "next/image";
-
+import { ProductService } from "@/services/product.service";
+import ProductCard from "@/components/ui/ProductCard";
 interface Perfume {
   id: number;
   name: string;
-  brand: string;
-  price: number;
-  image: string;
-  category: string;
+  brandName: string;
+  categoryName: string;
+  priceMin: number;
+  priceMax: number;
+  imageUrl: string;
   notes: string[];
 }
 
 export default function MenPerfumePage() {
-  const [perfumes, setPerfumes] = useState<Perfume[]>([
-    {
-      id: 1,
-      name: "Bleu de Chanel",
-      brand: "Chanel",
-      price: 150,
-      image: "/img/perfume1.jpg",
-      category: "Eau de Parfum",
-      notes: ["Woody", "Citrus", "Amber"]
-    },
-    // Thêm các sản phẩm khác...
-  ]);
-
+  const [perfumes, setPerfumes] = useState<Perfume[]>([]);
   const [filters, setFilters] = useState({
     category: "all",
     priceRange: "all",
-    notes: "all"
+    notes: "all",
+    gender: "Male"
   });
 
-  // GSAP Animation
+  useEffect(() => {
+    const fetchPerfumes = async () => {
+      try {
+        const response = await ProductService.getFiltered(filters);
+        setPerfumes(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Lỗi khi tải nước hoa:", error);
+      }
+    };
+
+    fetchPerfumes();
+  }, [filters]);
+
   useEffect(() => {
     gsap.from(".perfume-card", {
       y: 100,
@@ -45,12 +48,12 @@ export default function MenPerfumePage() {
       stagger: 0.2,
       ease: "power3.out"
     });
-  }, []);
+  }, [perfumes]);
 
   return (
     <div className="min-h-screen mt-20">
       {/* Hero Section */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="relative h-[60vh] flex items-center justify-center"
@@ -64,8 +67,8 @@ export default function MenPerfumePage() {
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>
-        
-        <motion.div 
+
+        <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -76,32 +79,32 @@ export default function MenPerfumePage() {
         </motion.div>
       </motion.section>
 
-      {/* Filters Section */}
+      {/* Filters */}
       <section className="py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-wrap gap-4 justify-center">
-            <select 
+            <select
               className="px-4 py-2 rounded-lg border"
-              onChange={(e) => setFilters({...filters, category: e.target.value})}
+              onChange={(e) => setFilters({ ...filters, category: e.target.value })}
             >
               <option value="all">All Categories</option>
               <option value="Eau de Parfum">Eau de Parfum</option>
               <option value="Eau de Toilette">Eau de Toilette</option>
             </select>
 
-            <select 
+            <select
               className="px-4 py-2 rounded-lg border"
-              onChange={(e) => setFilters({...filters, priceRange: e.target.value})}
+              onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
             >
               <option value="all">All Prices</option>
               <option value="0-50">Under $50</option>
               <option value="50-100">$50 - $100</option>
-              <option value="100+">$100+</option>
+              <option value="100+">Above $100</option>
             </select>
 
-            <select 
+            <select
               className="px-4 py-2 rounded-lg border"
-              onChange={(e) => setFilters({...filters, notes: e.target.value})}
+              onChange={(e) => setFilters({ ...filters, notes: e.target.value })}
             >
               <option value="all">All Notes</option>
               <option value="Woody">Woody</option>
@@ -117,38 +120,19 @@ export default function MenPerfumePage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {perfumes.map((perfume) => (
-              <motion.div
+              <ProductCard
                 key={perfume.id}
-                className="perfume-card group"
-                whileHover={{ y: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="relative aspect-square overflow-hidden rounded-lg">
-                  <Image
-                    src={perfume.image}
-                    alt={perfume.name}
-                    fill
-                    className="object-cover transition-transform group-hover:scale-110"
-                  />
-                </div>
-                <div className="mt-4">
-                  <h3 className="text-xl font-semibold">{perfume.name}</h3>
-                  <p className="text-sm text-gray-600">{perfume.brand}</p>
-                  <p className="text-lg font-bold mt-2">${perfume.price}</p>
-                  <div className="flex gap-2 mt-2">
-                    {perfume.notes.map((note, index) => (
-                      <span 
-                        key={index}
-                        className="px-2 py-1 text-xs rounded-full bg-gray-100"
-                      >
-                        {note}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
+                id={perfume.id.toString()}
+                title={perfume.name}
+                priceMin={perfume.priceMin}
+                priceMax={perfume.priceMax}
+                imageUrl={perfume.imageUrl}
+                brand={perfume.brandName}
+                notes={perfume.notes}
+              />
             ))}
           </div>
+
         </div>
       </section>
     </div>
