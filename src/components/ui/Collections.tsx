@@ -43,7 +43,7 @@ const Collections: React.FC = () => {
     // Function to check scroll position
     const handleScroll = () => {
         const scrollPosition = window.scrollY;
-        const scrollThreshold = 300; // You can adjust the threshold to trigger the motion effect
+        const scrollThreshold = 300; //scroll threshold
 
         if (scrollPosition > scrollThreshold) {
             setScrolled(true);
@@ -72,7 +72,7 @@ const Collections: React.FC = () => {
                     {products.map((product, index) => (
                         <ProductCard
                             brand={product.brand}
-
+                            notes={product.notes}
                             key={index}
                             id={index.toString()}
                             title={product.title}
