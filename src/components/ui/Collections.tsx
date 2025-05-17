@@ -71,13 +71,15 @@ const Collections: React.FC = () => {
                 >
                     {products.map((product, index) => (
                         <ProductCard
+                            brand={product.brand}
 
                             key={index}
                             id={index.toString()}
                             title={product.title}
-                            price={product.price}
+                            priceMin={product.priceMin}
+                            priceMax={product.priceMax}
                             imageUrl={product.imageUrl}
-                            rating={product.rating}
+                            star={product.star}
                         />
                     ))}
                 </motion.div>

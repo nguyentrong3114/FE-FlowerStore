@@ -6,7 +6,7 @@ export const ProductService = {
     },
     getFiltered: (filters: {
         gender?: string;
-        category?: string;
+        brand?: string;
         priceRange?: string;
         notes?: string;
       }) => {
@@ -16,8 +16,8 @@ export const ProductService = {
           params.gender = filters.gender;
         }
     
-        if (filters.category && filters.category !== 'all') {
-          params.category = filters.category;
+        if (filters.brand && filters.brand !== 'all') {
+          params.brand = filters.brand;
         }
     
         if (filters.priceRange && filters.priceRange !== 'all') {
@@ -33,5 +33,8 @@ export const ProductService = {
         }
     
         return api.get('/products', { params });
-      }
+    },
+    getById: (id: number) => {
+        return api.get(`/products/${id}`);
+    }
 }

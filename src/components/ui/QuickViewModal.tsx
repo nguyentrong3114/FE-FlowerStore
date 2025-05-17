@@ -9,10 +9,9 @@ interface QuickViewModalProps {
     id: string;
     title: string;
     priceMin: number;
-    brand: string;
+    star: number;
     priceMax: number;
     imageUrl: string;
-    rating?: number;
     description?: string;
   };
 }
@@ -58,13 +57,13 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({
             <h2 className="text-2xl font-bold">{product.title}</h2>
             <p className="text-sm text-gray-600">{product.brand}</p>
             <p className="text-xl font-semibold">{product.priceMin} - {product.priceMax}</p>
-            {product.rating && (
+            {product.star && (
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
                   <span
                     key={i}
                     className={
-                      i < (product.rating || 0)
+                      i < (product.star || 0)
                         ? 'text-yellow-400'
                         : 'text-gray-300'
                     }
@@ -72,7 +71,7 @@ const QuickViewModal: React.FC<QuickViewModalProps> = ({
                     ★
                   </span>
                 ))}
-                <span className="ml-2 text-sm">({product.rating.toFixed(1)})</span>
+                <span className="ml-2 text-sm">({product.star.toFixed(1)})</span>
               </div>
             )}
             {product.description && (
