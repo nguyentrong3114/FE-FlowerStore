@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, ShoppingCart, Eye } from 'lucide-react';
-import QuickViewModal from './QuickViewModal';
+import QuickViewModal from '@/components/product/QuickViewModal';
 
 interface ProductCardProps {
   id: string;
@@ -45,7 +45,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <>
       <div className="max-w-sm rounded-2xl shadow-xl overflow-hidden transform transition-all hover:scale-105 group ring-1 relative">
-        <Link href={`/perfume/forhim/${id}`}>
+        <Link href={`/products/${id}`}>
           <div className="relative h-64 w-full overflow-hidden">
             <Image
               src={!imgError && imageUrl ? imageUrl : '/img/product/404image.webp'}

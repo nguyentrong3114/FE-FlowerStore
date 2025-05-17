@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import Image from "next/image";
 import { ProductService } from "@/services/product.service";
-import ProductCard from "@/components/ui/ProductCard";
+import ProductCard from "@/components/product/ProductCard";
 interface Perfume {
   id: number;
   name: string;

@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { ProductService } from "@/services/product.service";
-import ProductCard from "@/components/ui/ProductCard";
+import ProductCard from "@/components/product/ProductCard";
 
 interface Perfume {
     id: number;

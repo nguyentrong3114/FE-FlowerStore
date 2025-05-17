@@ -1,10 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import ProductCard from './ProductCard';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ProductCard from '../product/ProductCard';
 
 const products = [
     {
