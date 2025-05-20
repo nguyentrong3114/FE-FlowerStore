@@ -1,18 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
+import { UserService } from "@/services/user.service";
 export default function UserDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
+  const [passwords, setPasswords] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
 
+  useEffect(() => {
+    UserService.getMe().then((res) => {
+      setUser(res.data);
+      console.log(res.data);
+    });
+  }, []);
   const [user, setUser] = useState({
-    name: "Laura Cooper",
-    email: "laura.cooper@example.com",
-    phone: "+1 234 567 890",
-    gender: "Female",
-    style: "Elegant, Sophisticated",
+    fullName: "Trống",
+    email: "Trống",
+    phone: "Trống", 
+    gender: "Trống",
+    style: "Trống",
   });
 
   const orders = [
@@ -23,6 +34,32 @@ export default function UserDashboard() {
 
   const handleInputChange = (field: string, value: string) => {
     setUser((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePasswordChange = (field: string, value: string) => {
+    setPasswords(prev => ({...prev, [field]: value}));
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if(passwords.newPassword !== passwords.confirmPassword) {
+      alert("Mật khẩu mới không khớp!");
+      return;
+    }
+    try {
+      await UserService.changePassword({
+        oldPassword: passwords.oldPassword,
+        newPassword: passwords.newPassword
+      });
+      alert("Đổi mật khẩu thành công!");
+      setPasswords({
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      });
+    } catch(error) {
+      alert("Đổi mật khẩu thất bại!");
+    }
   };
 
   const tabs = [
@@ -44,9 +81,8 @@ export default function UserDashboard() {
               setActiveTab(tab.key);
               setIsEditing(false);
             }}
-            className={`block w-full text-left px-4 py-2 rounded  ${
-              activeTab === tab.key ? "border font-bold" : ""
-            }`}
+            className={`block w-full text-left px-4 py-2 rounded  ${activeTab === tab.key ? "border font-bold" : ""
+              }`}
           >
             {tab.label}
           </button>
@@ -87,7 +123,7 @@ export default function UserDashboard() {
                     className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
                   />
                 ) : (
-                  <p className="border rounded px-3 py-2">{user.name}</p>
+                  <p className="border rounded px-3 py-2">{user.fullName || "Trống"}</p>
                 )}
               </div>
 
@@ -101,7 +137,7 @@ export default function UserDashboard() {
                     className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
                   />
                 ) : (
-                  <p className="border rounded px-3 py-2">{user.email}</p>
+                  <p className="border rounded px-3 py-2">{user.email || "Trống"}</p>
                 )}
               </div>
 
@@ -115,7 +151,7 @@ export default function UserDashboard() {
                     className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
                   />
                 ) : (
-                  <p className="border rounded px-3 py-2">{user.phone}</p>
+                  <p className="border rounded px-3 py-2">{user.phone || "Trống"}</p>
                 )}
               </div>
 
@@ -132,7 +168,7 @@ export default function UserDashboard() {
                     <option>Other</option>
                   </select>
                 ) : (
-                  <p className="border rounded px-3 py-2">{user.gender}</p>
+                  <p className="border rounded px-3 py-2">{user.gender || "Trống"}</p>
                 )}
               </div>
 
@@ -146,7 +182,7 @@ export default function UserDashboard() {
                     className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
                   />
                 ) : (
-                  <p className="border rounded px-3 py-2">{user.style}</p>
+                  <p className="border rounded px-3 py-2">{user.style || "Trống"}</p>
                 )}
               </div>
             </div>
@@ -156,18 +192,33 @@ export default function UserDashboard() {
         {activeTab === "changePassword" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} key="changePassword" className="space-y-6 max-w-md">
             <h2 className="text-2xl font-bold mb-4">Change Password</h2>
-            <form className="space-y-4">
+            <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Current Password</label>
-                <input type="password" className="w-full border rounded px-3 py-2 focus:outline-none focus:ring" />
+                <input 
+                  type="password" 
+                  value={passwords.oldPassword}
+                  onChange={(e) => handlePasswordChange("oldPassword", e.target.value)}
+                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring" 
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">New Password</label>
-                <input type="password" className="w-full border rounded px-3 py-2 focus:outline-none focus:ring" />
+                <input 
+                  type="password"
+                  value={passwords.newPassword}
+                  onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
+                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring" 
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Confirm New Password</label>
-                <input type="password" className="w-full border rounded px-3 py-2 focus:outline-none focus:ring" />
+                <input 
+                  type="password"
+                  value={passwords.confirmPassword}
+                  onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
+                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring" 
+                />
               </div>
               <button type="submit" className="px-4 py-2 border rounded shadow hover:shadow-lg transition-shadow">
                 Update Password

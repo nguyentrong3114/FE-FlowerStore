@@ -8,11 +8,13 @@ import { LogOut } from 'lucide-react';
 import DropdownMenu from './DropdownMenu';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
   const { t } = useLanguage();
   const { user, loading, logout } = useAuth();
+  const router = useRouter();
 
   const [mounted, setMounted] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
@@ -71,6 +73,11 @@ const Navbar = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${showNavbar ? 'translate-y-0' : '-translate-y-full'
@@ -109,7 +116,7 @@ const Navbar = () => {
               <Link href="/me" className="rounded-md text-sm">
                 {theme === 'dark' ? <User color="yellow" /> : <User color="gray" />}
               </Link>
-              <button className='-md text-sm' onClick={logout} aria-label="Logout">
+              <button className='-md text-sm' onClick={handleLogout} aria-label="Logout">
                 {theme === 'dark' ? <LogOut color="yellow" /> : <LogOut color="gray" />}
               </button>
             </>
