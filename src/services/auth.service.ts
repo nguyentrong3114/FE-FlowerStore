@@ -6,10 +6,12 @@ export const AuthService = {
       '/session',
       { email, password },
       {
-        withCredentials: true 
+        withCredentials: true
       }
     );
   },
   isLogin: () => api.get('/session', { withCredentials: true }),
   logout: () => api.delete('/session', { withCredentials: true }),
+  verifyOTP: (email: string, otp: string) => api.post('/users/me/verify', { email, otp }, { withCredentials: true }),
+  resendOTP: (email: string) => api.post('/users/me/send-otp', { email }, { withCredentials: true }),
 };

@@ -47,14 +47,13 @@ export default function RegisterPage() {
 
             if (response.status === 200) {
                 setSuccessMessage('Đăng ký thành công! Đang chuyển hướng...');
+                console.log(response.data);
                 setTimeout(() => {
-                    router.push('/auth/login');
+                    router.push('/auth/otp');
                 }, 2000);
             }
         } catch (error: any) {
             console.error('Đăng ký thất bại:', error);
-
-            // Nếu có response từ server
             if (error.response && error.response.data && error.response.data.message) {
                 setError(error.response.data.message);
             } else {
