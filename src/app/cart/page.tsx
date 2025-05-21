@@ -1,30 +1,29 @@
 "use client";
 import { useState, useEffect } from "react";
-import { AuthService } from "@/services/auth.service";
 import { CartService } from "@/services/cart.service";
-
+import { useAuth } from "@/contexts/AuthContext";
 interface CartItem {
-    id: number;
-    name: string;
+    productVariantId: number;
+    productName: string;
     price: number;
     quantity: number;
     imageUrl: string;
+    size: string;
+    totalPrice: number;
 }
 
 export default function CartPage() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
+    const { user } = useAuth();
     useEffect(() => {
         const loadCartItems = async () => {
             try {
-                const isLogin = await AuthService.isLogin();
-                if (isLogin) {
+                if (user != null) {
                     const response = await CartService.getCartItems();
-                    setCartItems(response.cartItems);
                     console.log(response.cartItems);
-                    localStorage.setItem('cartItems', JSON.stringify(response.cartItems));
+                    setCartItems(response.cartItems);
                 } else {
-                    const localData = localStorage.getItem("cartItems");
+                    const localData = localStorage.getItem("local-cart");
                     if (localData) {
                         setCartItems(JSON.parse(localData));
                     }
@@ -34,26 +33,60 @@ export default function CartPage() {
             }
         };
         loadCartItems();
-    }, []);
+    }, [user]);
 
-    const updateQuantity = (productId: number, delta: number) => {
-        const updatedCart = cartItems.map(item =>
-            item.id === productId
-                ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-                : item
-        );
-        setCartItems(updatedCart);
-        localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+    const updateQuantity = async (productVariantId: number, delta: number) => {
+        try {
+            const item = cartItems.find(item => item.productVariantId === productVariantId);
+            if (!item) return;
+
+            const newQuantity = item.quantity + delta;
+            
+            if (newQuantity <= 0) {
+                if (window.confirm('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?')) {
+                    await removeFromCart(productVariantId, item.quantity);
+                    return;
+                }
+                return;
+            }
+
+            const updatedCart = cartItems.map(item =>
+                item.productVariantId === productVariantId
+                    ? {
+                        ...item,
+                        quantity: newQuantity,
+                        totalPrice: item.price * newQuantity
+                    }
+                    : item
+            );
+
+            if (user != null) {
+                await CartService.updateCartItem(productVariantId, newQuantity);
+                console.log("Gửi updateCartItem:", productVariantId, newQuantity);
+            }
+
+            setCartItems(updatedCart);
+        } catch (error) {
+            console.error("Error updating quantity:", error);
+        }
     };
 
-    const removeFromCart = (productId: number) => {
-        const updatedCart = cartItems.filter(item => item.id !== productId);
-        setCartItems(updatedCart);
-        localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+    const removeFromCart = async (productVariantId: number, quantity: number) => {
+        try {
+            if (user != null) {
+                await CartService.removeFromCart(productVariantId, quantity);
+            }
+            
+            const updatedCart = cartItems.filter(item => item.productVariantId !== productVariantId);
+            setCartItems(updatedCart);
+            localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+        } catch (error) {
+            console.error("Error removing item:", error);
+        }
     };
 
     const formatCurrency = (price: number) =>
-        price.toLocaleString("en-US", { style: "currency", currency: "USD" });
+        price.toLocaleString("us-US", { style: "currency", currency: "USD" });
 
     return (
         <div className="min-h-screen pt-20 px-6">
@@ -65,38 +98,43 @@ export default function CartPage() {
                 <div className="space-y-6">
                     {cartItems.map(item => (
                         <div
-                            key={item.id}
+                            key={item.productVariantId}
                             className="flex flex-col sm:flex-row justify-between items-center border p-4 rounded-lg shadow-sm"
                         >
                             <div className="flex items-center gap-4 w-full sm:w-auto">
                                 <img
                                     src={item.imageUrl}
-                                    alt={item.name}
+                                    alt={item.productName}
                                     className="w-24 h-24 object-cover rounded-md"
                                 />
                                 <div>
-                                    <h3 className="text-lg font-semibold">{item.name}</h3>
-                                    <p className="text-gray-600">{formatCurrency(item.price)}</p>
+                                    <h3 className="text-lg font-semibold">{item.productName}</h3>
+                                    <p className="text-gray-600">Đơn giá: {formatCurrency(item.price)}</p>
+                                    <p className="text-gray-600">Kích thước: {item.size}</p>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-4 mt-4 sm:mt-0">
                                 <button
-                                    onClick={() => updateQuantity(item.id, -1)}
+                                    onClick={() => updateQuantity(item.productVariantId, -1)}
                                     className="px-3 py-1 border rounded hover:bg-gray-200"
                                 >
                                     –
                                 </button>
                                 <span className="min-w-[24px] text-center">{item.quantity}</span>
                                 <button
-                                    onClick={() => updateQuantity(item.id, 1)}
+                                    onClick={() => updateQuantity(item.productVariantId, 1)}
                                     className="px-3 py-1 border rounded hover:bg-gray-200"
                                 >
                                     +
                                 </button>
 
+                                <div className="ml-4">
+                                    <p className="font-semibold">Thành tiền: {formatCurrency(item.totalPrice)}</p>
+                                </div>
+
                                 <button
-                                    onClick={() => removeFromCart(item.id)}
+                                    onClick={() => removeFromCart(item.productVariantId, item.quantity)}
                                     className="text-red-500 hover:text-red-700 ml-4"
                                 >
                                     Xóa
@@ -109,7 +147,7 @@ export default function CartPage() {
                         <div className="text-2xl font-bold">
                             Tổng cộng:{" "}
                             {formatCurrency(
-                                cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+                                cartItems.reduce((total, item) => total + item.totalPrice, 0)
                             )}
                         </div>
                         <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">

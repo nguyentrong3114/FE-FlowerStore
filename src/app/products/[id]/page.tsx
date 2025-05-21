@@ -7,6 +7,8 @@ import Image from "next/image";
 import { FaPinterest, FaFacebookF, FaTwitter } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import { ProductService } from "@/services/product.service";
+import { useAuth } from "@/contexts/AuthContext";
+import { CartService } from "@/services/cart.service";
 
 interface Variant {
     id: number;
@@ -31,16 +33,15 @@ interface PerfumeDetail {
     variants: Variant[];
     notes: Notes | null;
 }
-
 const StarRating = ({ rating }: { rating: number }) => (
     <div className="flex">
         {[...Array(5)].map((_, i) => (
             <motion.svg
-                key={i}
-                className={`w-5 h-5 ${i < Math.floor(rating) ? "text-yellow-400" : "text-gray-300"}`}
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                whileHover={{ scale: 1.2 }}
+            key={i}
+            className={`w-5 h-5 ${i < Math.floor(rating) ? "text-yellow-400" : "text-gray-300"}`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            whileHover={{ scale: 1.2 }}
             >
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </motion.svg>
@@ -49,6 +50,7 @@ const StarRating = ({ rating }: { rating: number }) => (
 );
 
 export default function PerfumeDetailPage() {
+    const { user } = useAuth();
     const [perfume, setPerfume] = useState<PerfumeDetail | null>(null);
     const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
@@ -61,10 +63,53 @@ export default function PerfumeDetailPage() {
         ProductService.getById(Number(id))
             .then((res: any) => {
                 setPerfume(res.data);
+                console.log(res.data);
                 setSelectedVariant(res.data.variants?.[0] || null);
             })
             .catch((err: any) => console.error("Lỗi lấy sản phẩm:", err));
     }, [id]);
+    const handleAddToCart = async () => {
+        if (user) {
+            CartService.addToCart(selectedVariant?.id || 0, quantity)
+                .then((res: any) => {
+                    console.log("Đã thêm vào giỏ hàng", res);
+                })
+                .catch((err: Error) => {
+                    console.error("Lỗi thêm vào giỏ hàng:", err);
+                });
+        } else {
+            if (!selectedVariant || !perfume) return;
+
+            const localCart = JSON.parse(localStorage.getItem("local-cart") || "[]");
+
+            const existingIndex = localCart.findIndex(
+                (item: any) => item.id === selectedVariant.id
+            );
+
+            const newItem = {
+                id: selectedVariant.id,
+                productId: perfume.id,
+                productName: perfume.name,
+                imageUrl: perfume.images?.[0] || "/img/product/404image.webp",
+                price: selectedVariant.price,
+                size: selectedVariant.size,
+                quantity: quantity,
+                totalPrice: selectedVariant.price * quantity
+            };
+
+            if (existingIndex !== -1) {
+                localCart[existingIndex].quantity += quantity;
+                localCart[existingIndex].totalPrice =
+                    localCart[existingIndex].quantity * localCart[existingIndex].price;
+            } else {
+                localCart.push(newItem);
+            }
+
+            localStorage.setItem("local-cart", JSON.stringify(localCart));
+            console.log("Đã lưu vào giỏ hàng localStorage:", newItem);
+        }
+    };
+
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -87,7 +132,7 @@ export default function PerfumeDetailPage() {
 
         return () => ctx.revert();
     }, []);
- 
+
     const calculatedPrice = selectedVariant ? selectedVariant.price * quantity : 0;
     if (!perfume) return <div className="p-20 text-center">Loading...</div>;
 
@@ -159,7 +204,7 @@ export default function PerfumeDetailPage() {
                                 <span className="px-4 py-2">{quantity}</span>
                                 <button className="px-4 py-2 text-lg" onClick={() => setQuantity(quantity + 1)}>+</button>
                             </div>
-                            <motion.button className="flex-1 bg-black text-white px-8 py-3 rounded-lg" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                            <motion.button onClick={handleAddToCart} className="flex-1 bg-black text-white px-8 py-3 rounded-lg" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                                 Add to Cart
                             </motion.button>
                         </div>

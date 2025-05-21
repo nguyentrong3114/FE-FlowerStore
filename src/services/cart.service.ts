@@ -5,18 +5,25 @@ export const CartService = {
         const response = await api.get('/cart');
         return response.data;
     },
-    addToCart: async (productId: string) => {
+    addToCart: async ( productVariantId: number, quantity: number) => {
         const response = await api.post('/cart', {
-            productId,
+            productVariantId,
+            quantity
         });
         return response.data;
     },
-    removeFromCart: async (productId: string) => {
-        const response = await api.delete(`/cart/${productId}`);
+    removeFromCart: async (productVariantId: number, quantity: number) => {
+        const response = await api.delete(`/cart`, {
+            data: {
+                productVariantId,
+                quantity
+            }
+        });
         return response.data;
     },
-    updateCartItem: async (productId: string, quantity: number) => {
-        const response = await api.put(`/cart/${productId}`, {
+    updateCartItem: async (productVariantId: number, quantity: number) => {
+        const response = await api.put(`/cart`, {
+            productVariantId,
             quantity,
         });
         return response.data;
