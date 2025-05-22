@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { CartService } from "@/services/cart.service";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 interface CartItem {
     productVariantId: number;
     productName: string;
@@ -15,6 +16,7 @@ interface CartItem {
 export default function CartPage() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const { user } = useAuth();
+    const router = useRouter();
     useEffect(() => {
         const loadCartItems = async () => {
             try {
@@ -34,7 +36,9 @@ export default function CartPage() {
         };
         loadCartItems();
     }, [user]);
-
+    const handleCheckOut = () => {
+        router.push("/payment");
+    }
     const updateQuantity = async (productVariantId: number, delta: number) => {
         try {
             const item = cartItems.find(item => item.productVariantId === productVariantId);
@@ -95,64 +99,73 @@ export default function CartPage() {
             {cartItems.length === 0 ? (
                 <p className="text-gray-500">Giỏ hàng đang trống.</p>
             ) : (
-                <div className="space-y-6">
-                    {cartItems.map(item => (
-                        <div
-                            key={item.productVariantId}
-                            className="flex flex-col sm:flex-row justify-between items-center border p-4 rounded-lg shadow-sm"
-                        >
-                            <div className="flex items-center gap-4 w-full sm:w-auto">
-                                <img
-                                    src={item.imageUrl}
-                                    alt={item.productName}
-                                    className="w-24 h-24 object-cover rounded-md"
-                                />
-                                <div>
-                                    <h3 className="text-lg font-semibold">{item.productName}</h3>
-                                    <p className="text-gray-600">Đơn giá: {formatCurrency(item.price)}</p>
-                                    <p className="text-gray-600">Kích thước: {item.size}</p>
+                <div className="flex gap-6">
+                    <div className="w-2/3 space-y-6">
+                        {cartItems.map(item => (
+                            <div
+                                key={item.productVariantId}
+                                className="flex flex-col sm:flex-row justify-between items-center border p-4 rounded-lg shadow-sm"
+                            >
+                                <div className="flex items-center gap-4 w-full sm:w-auto">
+                                    <img
+                                        src={item.imageUrl}
+                                        alt={item.productName}
+                                        className="w-24 h-24 object-cover rounded-md"
+                                    />
+                                    <div>
+                                        <h3 className="text-lg font-semibold">{item.productName}</h3>
+                                        <p className="text-gray-600">Đơn giá: {formatCurrency(item.price)}</p>
+                                        <p className="text-gray-600">Kích thước: {item.size}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-4 mt-4 sm:mt-0">
+                                    <button
+                                        onClick={() => updateQuantity(item.productVariantId, -1)}
+                                        className="px-3 py-1 border rounded hover:bg-gray-200"
+                                    >
+                                        –
+                                    </button>
+                                    <span className="min-w-[24px] text-center">{item.quantity}</span>
+                                    <button
+                                        onClick={() => updateQuantity(item.productVariantId, 1)}
+                                        className="px-3 py-1 border rounded hover:bg-gray-200"
+                                    >
+                                        +
+                                    </button>
+
+                                    <div className="ml-4">
+                                        <p className="font-semibold">Thành tiền: {formatCurrency(item.totalPrice)}</p>
+                                    </div>
+
+                                    <button
+                                        onClick={() => removeFromCart(item.productVariantId, item.quantity)}
+                                        className="text-red-500 hover:text-red-700 ml-4"
+                                    >
+                                        Xóa
+                                    </button>
                                 </div>
                             </div>
+                        ))}
+                    </div>
 
-                            <div className="flex items-center gap-4 mt-4 sm:mt-0">
-                                <button
-                                    onClick={() => updateQuantity(item.productVariantId, -1)}
-                                    className="px-3 py-1 border rounded hover:bg-gray-200"
-                                >
-                                    –
-                                </button>
-                                <span className="min-w-[24px] text-center">{item.quantity}</span>
-                                <button
-                                    onClick={() => updateQuantity(item.productVariantId, 1)}
-                                    className="px-3 py-1 border rounded hover:bg-gray-200"
-                                >
-                                    +
-                                </button>
-
-                                <div className="ml-4">
-                                    <p className="font-semibold">Thành tiền: {formatCurrency(item.totalPrice)}</p>
+                    <div className="w-1/3">
+                        <div className="border rounded-lg p-6 shadow-sm sticky top-24">
+                            <h2 className="text-xl font-bold mb-4">Tổng đơn hàng</h2>
+                            <div className="space-y-3">
+                                <div className="flex justify-between">
+                                    <span>Tạm tính:</span>
+                                    <span>{formatCurrency(cartItems.reduce((total, item) => total + item.totalPrice, 0))}</span>
                                 </div>
-
-                                <button
-                                    onClick={() => removeFromCart(item.productVariantId, item.quantity)}
-                                    className="text-red-500 hover:text-red-700 ml-4"
-                                >
-                                    Xóa
+                                <div className="flex justify-between font-bold text-lg border-t pt-3">
+                                    <span>Tổng cộng:</span>
+                                    <span>{formatCurrency(cartItems.reduce((total, item) => total + item.totalPrice, 0))}</span>
+                                </div>
+                                <button onClick={handleCheckOut} className="w-full bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 mt-4">
+                                    Thanh toán
                                 </button>
                             </div>
                         </div>
-                    ))}
-
-                    <div className="mt-10 flex justify-between items-center border-t pt-6">
-                        <div className="text-2xl font-bold">
-                            Tổng cộng:{" "}
-                            {formatCurrency(
-                                cartItems.reduce((total, item) => total + item.totalPrice, 0)
-                            )}
-                        </div>
-                        <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                            Thanh toán
-                        </button>
                     </div>
                 </div>
             )}

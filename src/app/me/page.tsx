@@ -16,14 +16,15 @@ export default function UserDashboard() {
     UserService.getMe().then((res) => {
       setUser(res.data);
       console.log(res.data);
+      
     });
   }, []);
+  
   const [user, setUser] = useState({
     fullName: "Trống",
     email: "Trống",
     phone: "Trống", 
-    gender: "Trống",
-    style: "Trống",
+    address: "Trống",
   });
 
   const orders = [
@@ -38,6 +39,16 @@ export default function UserDashboard() {
 
   const handlePasswordChange = (field: string, value: string) => {
     setPasswords(prev => ({...prev, [field]: value}));
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      await UserService.updateProfile(user);
+      alert("Cập nhật thông tin thành công!");
+      setIsEditing(false);
+    } catch (error: any) {
+      alert(error?.response?.data?.message || "Cập nhật thông tin thất bại!");
+    }
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -57,8 +68,8 @@ export default function UserDashboard() {
         newPassword: "",
         confirmPassword: ""
       });
-    } catch(error) {
-      alert("Đổi mật khẩu thất bại!");
+    } catch(error: any) {
+      alert(error?.response?.data?.message || "Đổi mật khẩu thất bại!");
     }
   };
 
@@ -104,7 +115,7 @@ export default function UserDashboard() {
                 </button>
               ) : (
                 <button
-                  onClick={() => setIsEditing(false)}
+                  onClick={handleSaveProfile}
                   className="px-4 py-2 border rounded shadow hover:shadow-lg transition-shadow"
                 >
                   Save
@@ -118,8 +129,8 @@ export default function UserDashboard() {
                 {isEditing ? (
                   <input
                     type="text"
-                    value={user.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    value={user.fullName}
+                    onChange={(e) => handleInputChange("fullName", e.target.value)}
                     className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
                   />
                 ) : (
@@ -155,34 +166,18 @@ export default function UserDashboard() {
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Gender</label>
-                {isEditing ? (
-                  <select
-                    value={user.gender}
-                    onChange={(e) => handleInputChange("gender", e.target.value)}
-                    className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
-                  >
-                    <option>Female</option>
-                    <option>Male</option>
-                    <option>Other</option>
-                  </select>
-                ) : (
-                  <p className="border rounded px-3 py-2">{user.gender || "Trống"}</p>
-                )}
-              </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-1">Style</label>
+                <label className="block text-sm font-medium mb-1">Address</label>
                 {isEditing ? (
                   <input
                     type="text"
-                    value={user.style}
-                    onChange={(e) => handleInputChange("style", e.target.value)}
+                    value={user.address}
+                    onChange={(e) => handleInputChange("address", e.target.value)}
                     className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
                   />
                 ) : (
-                  <p className="border rounded px-3 py-2">{user.style || "Trống"}</p>
+                  <p className="border rounded px-3 py-2">{user.address || "Trống"}</p>
                 )}
               </div>
             </div>
