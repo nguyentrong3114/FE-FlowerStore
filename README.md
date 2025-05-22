@@ -28,17 +28,7 @@ Frontend của website thương mại điện tử bán nước hoa cao cấp **
 git clone https://github.com/nguyentrong3114/FE-AMPerfume.git
 cd FE-AMPerfume
 npm install
-🧪 Chạy dự án
-bash
-Copy
-Edit
 npm run dev
-🔐 Cấu hình môi trường
-Tạo file .env.local trong root project với nội dung:
 
-env
-Copy
-Edit
-NEXT_PUBLIC_API_URL=http://localhost:5047
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_secret_here
+  
+
