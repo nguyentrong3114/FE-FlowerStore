@@ -13,7 +13,23 @@ interface CartItem {
     size: string
     totalPrice: number
 }
+interface PaymentDetailDTO {
+    productVariantId: number
+    quantity: number
+    price: number
+}
 
+interface CreatePaymentRequestDTO {
+    payment: {
+        method: string
+        fullName: string
+        email: string
+        address: string
+        amount: number
+        shippingFee: number
+    },
+    items: PaymentDetailDTO[]
+}
 export default function PaymentPage() {
     const [cart, setCart] = useState<CartItem[]>([])
     const [totalAmount, setTotalAmount] = useState(0)
@@ -49,15 +65,31 @@ export default function PaymentPage() {
         setIsSubmitting(true)
 
         try {
-            await paymentService.checkout({
-                method: form.method.toUpperCase(), // "COD", "BANK", "MOMO"
-                fullName: form.name,
-                phoneNumber: form.phone,
-                email: form.email,
-                address: form.address,
-                amount: totalAmount,
-                shippingFee: 30000
-            })
+            const payload: CreatePaymentRequestDTO = {
+                payment: {
+                    fullName: form.name,
+                    email: form.email,
+                    address: form.address,
+                    method: form.method.toUpperCase(),
+                    amount: totalAmount,
+                    shippingFee: 30000,
+                },
+                items: cart.map(item => ({
+                    productVariantId: item.productVariantId,
+                    quantity: item.quantity,
+                    price: item.price
+                }))
+            }
+
+            const paymentPayload = {
+                ...payload,
+                payment: {
+                    ...payload.payment,
+                    phoneNumber: form.phone
+                }
+            }
+
+            await paymentService.checkout(paymentPayload)
             setSuccess(true)
         } catch (err) {
             alert("Thanh toán thất bại.")

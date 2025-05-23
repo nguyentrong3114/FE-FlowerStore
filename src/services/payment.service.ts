@@ -1,5 +1,10 @@
 import api from "@/lib/api"
-
+export interface PaymentDetailDTO {
+    productVariantId: number
+    quantity: number
+    price: number
+  }
+  
 export interface PaymentDTO {
     method: string
     fullName: string
@@ -9,10 +14,14 @@ export interface PaymentDTO {
     amount: number
     shippingFee: number
 }
+export interface CreatePaymentRequestDTO {
+    payment: PaymentDTO
+    items: PaymentDetailDTO[]
+  }
 
 export const paymentService = {
-    checkout: async (paymentData: PaymentDTO) => {
-        const response = await api.post("/payments", paymentData)
+    checkout: async (data: CreatePaymentRequestDTO) => {
+        const response = await api.post("/payments", data)
         return response.data
     }
 }

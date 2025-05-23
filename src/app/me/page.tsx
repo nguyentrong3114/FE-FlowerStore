@@ -6,6 +6,7 @@ import { UserService } from "@/services/user.service";
 export default function UserDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [passwords, setPasswords] = useState({
     oldPassword: "",
     newPassword: "",
@@ -13,17 +14,22 @@ export default function UserDashboard() {
   });
 
   useEffect(() => {
-    UserService.getMe().then((res) => {
-      setUser(res.data);
-      console.log(res.data);
-      
-    });
+    const checkAuth = async () => {
+      try {
+        const res = await UserService.getMe();
+        setUser(res.data);
+        setLoading(false);
+      } catch (error) {
+        window.location.href = "/auth/login";
+      }
+    };
+
+    checkAuth();
   }, []);
-  
   const [user, setUser] = useState({
     fullName: "Trống",
     email: "Trống",
-    phone: "Trống", 
+    phone: "Trống",
     address: "Trống",
   });
 
@@ -38,7 +44,7 @@ export default function UserDashboard() {
   };
 
   const handlePasswordChange = (field: string, value: string) => {
-    setPasswords(prev => ({...prev, [field]: value}));
+    setPasswords(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSaveProfile = async () => {
@@ -53,7 +59,7 @@ export default function UserDashboard() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(passwords.newPassword !== passwords.confirmPassword) {
+    if (passwords.newPassword !== passwords.confirmPassword) {
       alert("Mật khẩu mới không khớp!");
       return;
     }
@@ -68,7 +74,7 @@ export default function UserDashboard() {
         newPassword: "",
         confirmPassword: ""
       });
-    } catch(error: any) {
+    } catch (error: any) {
       alert(error?.response?.data?.message || "Đổi mật khẩu thất bại!");
     }
   };
@@ -79,7 +85,25 @@ export default function UserDashboard() {
     { key: "orderHistory", label: "Order History" },
     { key: "trackOrder", label: "Track Orders" },
   ];
-
+  if (loading) {
+    return (
+      <div className="mx-auto w-full max-w-sm rounded-md border border-blue-300 p-4 mt-30">
+        <div className="flex animate-pulse space-x-4">
+          <div className="size-10 rounded-full bg-gray-200"></div>
+          <div className="flex-1 space-y-6 py-1">
+            <div className="h-2 rounded bg-gray-200"></div>
+            <div className="space-y-3">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2 h-2 rounded bg-gray-200"></div>
+                <div className="col-span-1 h-2 rounded bg-gray-200"></div>
+              </div>
+              <div className="h-2 rounded bg-gray-200"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
@@ -190,29 +214,29 @@ export default function UserDashboard() {
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Current Password</label>
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   value={passwords.oldPassword}
                   onChange={(e) => handlePasswordChange("oldPassword", e.target.value)}
-                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring" 
+                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">New Password</label>
-                <input 
+                <input
                   type="password"
                   value={passwords.newPassword}
                   onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
-                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring" 
+                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Confirm New Password</label>
-                <input 
+                <input
                   type="password"
                   value={passwords.confirmPassword}
                   onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)}
-                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring" 
+                  className="w-full border rounded px-3 py-2 focus:outline-none focus:ring"
                 />
               </div>
               <button type="submit" className="px-4 py-2 border rounded shadow hover:shadow-lg transition-shadow">
