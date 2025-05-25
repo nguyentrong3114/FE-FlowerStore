@@ -65,8 +65,41 @@ export default function CartPage() {
             );
 
             if (user != null) {
-                await CartService.updateCartItem(productVariantId, newQuantity);
-                console.log("Gửi updateCartItem:", productVariantId, newQuantity);
+                try {
+                    await CartService.updateCartItem(productVariantId, newQuantity);
+                    console.log("Gửi updateCartItem:", productVariantId, newQuantity);
+                } catch (error) {
+                    console.error("Lỗi khi gọi API, cập nhật local storage");
+                    const localData = localStorage.getItem("local-cart");
+                    if (localData) {
+                        const localCart = JSON.parse(localData);
+                        const updatedLocalCart = localCart.map((item: CartItem) =>
+                            item.productVariantId === productVariantId
+                                ? {
+                                    ...item,
+                                    quantity: newQuantity,
+                                    totalPrice: item.price * newQuantity
+                                }
+                                : item
+                        );
+                        localStorage.setItem("local-cart", JSON.stringify(updatedLocalCart));
+                    }
+                }
+            } else {
+                const localData = localStorage.getItem("local-cart");
+                if (localData) {
+                    const localCart = JSON.parse(localData);
+                    const updatedLocalCart = localCart.map((item: CartItem) =>
+                        item.productVariantId === productVariantId
+                            ? {
+                                ...item,
+                                quantity: newQuantity,
+                                totalPrice: item.price * newQuantity
+                            }
+                            : item
+                    );
+                    localStorage.setItem("local-cart", JSON.stringify(updatedLocalCart));
+                }
             }
 
             setCartItems(updatedCart);
@@ -79,11 +112,19 @@ export default function CartPage() {
         try {
             if (user != null) {
                 await CartService.removeFromCart(productVariantId, quantity);
+            } else {
+                const localData = localStorage.getItem("local-cart");
+                if (localData) {
+                    const localCart = JSON.parse(localData);
+                    const updatedLocalCart = localCart.filter((item: CartItem) => 
+                        item.productVariantId !== productVariantId
+                    );
+                    localStorage.setItem("local-cart", JSON.stringify(updatedLocalCart));
+                }
             }
             
             const updatedCart = cartItems.filter(item => item.productVariantId !== productVariantId);
             setCartItems(updatedCart);
-            localStorage.setItem("cartItems", JSON.stringify(updatedCart));
         } catch (error) {
             console.error("Error removing item:", error);
         }

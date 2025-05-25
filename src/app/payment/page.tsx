@@ -44,17 +44,35 @@ export default function PaymentPage() {
     const [success, setSuccess] = useState(false)
 
     useEffect(() => {
-        CartService.getCartItems().then((res) => {
-            const items = res.cartItems || res.data || []
-            setCart(items)
+        const loadCartItems = async () => {
+            try {
+                const response = await CartService.getCartItems();
+                const items = response.cartItems || response.data || [];
+                setCart(items);
 
-            const total = items.reduce((sum: number, item: CartItem) => {
-                return sum + item.price * item.quantity
-            }, 0)
+                const total = items.reduce((sum: number, item: CartItem) => {
+                    return sum + item.price * item.quantity
+                }, 0);
 
-            setTotalAmount(total)
-        })
-    }, [])
+                setTotalAmount(total);
+            } catch (error) {
+                // Nếu API lỗi hoặc chưa đăng nhập, lấy từ localStorage
+                const localData = localStorage.getItem("local-cart");
+                if (localData) {
+                    const items = JSON.parse(localData);
+                    setCart(items);
+                    
+                    const total = items.reduce((sum: number, item: CartItem) => {
+                        return sum + item.price * item.quantity
+                    }, 0);
+
+                    setTotalAmount(total);
+                }
+            }
+        };
+
+        loadCartItems();
+    }, []);
 
     const handleChange = (field: string, value: string) => {
         setForm((prev) => ({ ...prev, [field]: value }))

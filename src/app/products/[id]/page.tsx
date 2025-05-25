@@ -79,15 +79,15 @@ export default function PerfumeDetailPage() {
                 });
         } else {
             if (!selectedVariant || !perfume) return;
-
+            
             const localCart = JSON.parse(localStorage.getItem("local-cart") || "[]");
-
+            
             const existingIndex = localCart.findIndex(
-                (item: any) => item.id === selectedVariant.id
+                (item: any) => item.productVariantId === selectedVariant.id
             );
 
             const newItem = {
-                id: selectedVariant.id,
+                productVariantId: selectedVariant.id,
                 productId: perfume.id,
                 productName: perfume.name,
                 imageUrl: perfume.images?.[0] || "/img/product/404image.webp",
