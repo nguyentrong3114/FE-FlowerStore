@@ -118,8 +118,8 @@ export default function PaymentPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 mt-20">
-            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-lg">
+        <div className="min-h-screen flex items-center justify-center mt-20">
+            <div className="    shadow-lg rounded-lg p-8 w-full max-w-lg">
                 <h1 className="text-2xl font-bold mb-6 text-center">Thanh toán đơn hàng</h1>
 
                 <div className="mb-8">
