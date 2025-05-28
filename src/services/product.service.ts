@@ -5,15 +5,15 @@ export const ProductService = {
         return api.get('/products')
     },
     getFiltered: (filters: {
-        gender?: string;
+      categorySlug?: string;
         brand?: string;
         priceRange?: string;
         notes?: string;
       }) => {
         const params: any = {};
     
-        if (filters.gender && filters.gender !== 'all') {
-          params.gender = filters.gender;
+        if (filters.categorySlug && filters.categorySlug !== 'all') {
+          params.categorySlug = filters.categorySlug;
         }
     
         if (filters.brand && filters.brand !== 'all') {

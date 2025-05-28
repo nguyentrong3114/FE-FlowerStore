@@ -9,6 +9,7 @@ import DropdownMenu from './DropdownMenu';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -22,7 +23,7 @@ const Navbar = () => {
   const lastScrollY = useRef(0);
   const timeoutId = useRef<NodeJS.Timeout | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
-
+  const [categories, setCategories] = useState([]);
   useEffect(() => {
     setMounted(true);
     const handleScroll = () => {
@@ -55,7 +56,14 @@ const Navbar = () => {
       if (timeoutId.current) clearTimeout(timeoutId.current);
     };
   }, [showNavbar]);
-
+  useEffect(() => {
+    const loadCategory = async () => {
+      const res = await axios.get('http://localhost:5047/api/categories');
+      const data = await res.data;
+      setCategories(data);
+    };
+    loadCategory();
+  }, []);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -97,11 +105,10 @@ const Navbar = () => {
           <li><Link href="/">{t('home')}</Link></li>
           <li><Link href="/aboutus">{t('about')}</Link></li>
           <DropdownMenu
-            links={[
-              { text: 'All', href: '/products', },
-              { text: t('perfumeformale'), href: '/products/forhim' },
-              { text: t('perfumeforfemale'), href: '/products/forher' },
-            ]}
+            links={categories.map((categories: any) => ({
+              text: categories.name,
+              href: `/categories/${categories.slug}`,
+            }))}
           >
             {t('products')}
           </DropdownMenu>
