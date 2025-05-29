@@ -56,8 +56,8 @@ export default function PaymentPage() {
                     const total = items.reduce((sum: number, item: CartItem) => {
                         return sum + item.price * item.quantity
                     }, 0);
-
-                    setTotalAmount(total);
+                    const shippingFee = 30000;
+                    setTotalAmount(total + shippingFee);
                 }
                 else {
                     const localData = localStorage.getItem("local-cart");
@@ -68,7 +68,9 @@ export default function PaymentPage() {
                         const total = items.reduce((sum: number, item: CartItem) => {
                             return sum + item.price * item.quantity
                         }, 0);
-                        setTotalAmount(total);
+                        const shippingFee = 30000;
+                        console.log(localData);
+                        setTotalAmount(total + shippingFee);
                     }
                 }
             } catch (error) {
@@ -99,7 +101,7 @@ export default function PaymentPage() {
                 items: cart.map(item => ({
                     productVariantId: item.productVariantId,
                     quantity: item.quantity,
-                    price: item.price
+                    price: item.price,
                 }))
             }
 
@@ -110,9 +112,16 @@ export default function PaymentPage() {
                     phoneNumber: form.phone
                 }
             }
-
-            await paymentService.checkout(paymentPayload)
-            setSuccess(true)
+            if(user){
+                await paymentService.checkout(paymentPayload)
+                setSuccess(true)
+                localStorage.removeItem("local-cart")
+            }
+            else{
+                await paymentService.checkoutUnknown(paymentPayload)
+                setSuccess(true)
+                localStorage.removeItem("local-cart")
+            }
         } catch (err) {
             alert("Thanh toán thất bại.")
             console.error(err)
@@ -140,6 +149,9 @@ export default function PaymentPage() {
                                     <div className="font-medium">{item.productName}</div>
                                     <div className="text-sm text-gray-500">
                                         Số lượng: {item.quantity}
+                                    </div>
+                                    <div className="text-sm text-gray-500">
+                                        Kích cỡ: {item.size}
                                     </div>
                                 </div>
                                 <div className="font-semibold text-blue-700">

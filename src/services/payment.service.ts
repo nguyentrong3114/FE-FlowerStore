@@ -23,6 +23,10 @@ export const paymentService = {
     checkout: async (data: CreatePaymentRequestDTO) => {
         const response = await api.post("/payments", data)
         return response.data
+    },
+    checkoutUnknown: async (data: CreatePaymentRequestDTO) => {
+        const response = await api.post("/payments/unknown", data)
+        return response.data
     }
 }
   

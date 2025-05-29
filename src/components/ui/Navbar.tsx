@@ -9,6 +9,7 @@ import DropdownMenu from './DropdownMenu';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
 import axios from 'axios';
 
 const Navbar = () => {
@@ -23,7 +24,6 @@ const Navbar = () => {
   const lastScrollY = useRef(0);
   const timeoutId = useRef<NodeJS.Timeout | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
-  const [categories, setCategories] = useState([]);
   useEffect(() => {
     setMounted(true);
     const handleScroll = () => {
@@ -56,14 +56,14 @@ const Navbar = () => {
       if (timeoutId.current) clearTimeout(timeoutId.current);
     };
   }, [showNavbar]);
-  useEffect(() => {
-    const loadCategory = async () => {
-      const res = await axios.get('http://localhost:5047/api/categories');
-      const data = await res.data;
-      setCategories(data);
-    };
-    loadCategory();
-  }, []);
+
+  const fetcher = async (url: string) => {
+    const res = await axios.get(url);
+    return res.data;
+  };
+
+  const { data: categories = [] } = useSWR('http://localhost:5047/api/categories', fetcher);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
