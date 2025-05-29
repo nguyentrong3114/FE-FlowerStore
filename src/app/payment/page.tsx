@@ -3,6 +3,7 @@
 import { CartService } from "@/services/cart.service"
 import { paymentService } from "@/services/payment.service"
 import { useEffect, useState } from "react"
+import { useAuth } from "@/contexts/AuthContext"
 
 interface CartItem {
     productVariantId: number
@@ -33,11 +34,12 @@ interface CreatePaymentRequestDTO {
 export default function PaymentPage() {
     const [cart, setCart] = useState<CartItem[]>([])
     const [totalAmount, setTotalAmount] = useState(0)
+    const { user } = useAuth();
     const [form, setForm] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
+        name: user?.fullName || "",
+        email: user?.email || "",
+        phone: user?.phoneNumber || "",
+        address: user?.address || "",
         method: "cod"
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -46,31 +48,33 @@ export default function PaymentPage() {
     useEffect(() => {
         const loadCartItems = async () => {
             try {
-                const response = await CartService.getCartItems();
-                const items = response.cartItems || response.data || [];
-                setCart(items);
-
-                const total = items.reduce((sum: number, item: CartItem) => {
-                    return sum + item.price * item.quantity
-                }, 0);
-
-                setTotalAmount(total);
-            } catch (error) {
-                // Nếu API lỗi hoặc chưa đăng nhập, lấy từ localStorage
-                const localData = localStorage.getItem("local-cart");
-                if (localData) {
-                    const items = JSON.parse(localData);
+                if (user) {
+                    const response = await CartService.getCartItems();
+                    const items = response.cartItems || response.data || [];
                     setCart(items);
-                    
+
                     const total = items.reduce((sum: number, item: CartItem) => {
                         return sum + item.price * item.quantity
                     }, 0);
 
                     setTotalAmount(total);
                 }
+                else {
+                    const localData = localStorage.getItem("local-cart");
+                    if (localData) {
+                        const items = JSON.parse(localData);
+                        setCart(items);
+
+                        const total = items.reduce((sum: number, item: CartItem) => {
+                            return sum + item.price * item.quantity
+                        }, 0);
+                        setTotalAmount(total);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
             }
         };
-
         loadCartItems();
     }, []);
 

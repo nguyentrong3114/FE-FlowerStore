@@ -38,8 +38,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const priceDisplay =
     priceMin && priceMax
       ? priceMin === priceMax
-        ? `$${priceMin}`
-        : `$${priceMin} - $${priceMax}`
+        ? `${priceMin.toLocaleString('vi-VN')}đ`
+        : `${priceMin.toLocaleString('vi-VN')}đ - ${priceMax.toLocaleString('vi-VN')}đ`
       : 'Liên hệ';
 
   return (
@@ -59,7 +59,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </Link>
 
         <div className="p-7">
-          <Link href={`/perfume/forher/${id}`}>
+          <Link href={`/products/${id}`}>
             <h2 className="text-xl font-bold mb-2 hover:opacity-80 transition-colors">
               {title}
             </h2>

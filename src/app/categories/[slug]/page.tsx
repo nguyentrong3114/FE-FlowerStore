@@ -12,8 +12,8 @@ interface Perfume {
   name: string;
   brandName: string;
   category: string;
-  priceMin: number;
-  priceMax: number;
+  minPrice: number;
+  maxPrice: number;
   star: number;
   imageUrl: string;
   notes: string[];
@@ -22,21 +22,21 @@ interface Perfume {
 export default function CategoryPage() {
   const params = useParams();
   const slug = params.slug as string;
-  
+
   const [perfumes, setPerfumes] = useState<Perfume[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     categorySlug: slug,
     brand: "all",
-    priceRange: "all", 
+    priceRange: "all",
     notes: "all",
   });
 
   const fetchPerfumes = useCallback(async () => {
     try {
       setLoading(true);
-      console.log(filters);
       const response = await ProductService.getFiltered(filters);
+      console.log(response.data);
       setPerfumes(response.data);
     } catch (error) {
       console.error("Lỗi khi tải nước hoa:", error);
@@ -47,6 +47,7 @@ export default function CategoryPage() {
 
   useEffect(() => {
     fetchPerfumes();
+    
   }, [fetchPerfumes]);
 
   if (loading) {
@@ -66,14 +67,10 @@ export default function CategoryPage() {
   return (
     <div className="min-h-screen mt-20">
       {/* Hero Section */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="relative h-[60vh] flex items-center justify-center"
-      >
+      <section className="relative h-[60vh] flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           <Image
-            src={`/img/${slug.toLowerCase()}.webp`}
+            src={`/img/product/banner1.avif`}
             alt={`${slug} Collection`}
             fill
             className="object-cover"
@@ -81,16 +78,13 @@ export default function CategoryPage() {
           <div className="absolute inset-0 bg-black/40" />
         </div>
 
-        <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
+        <div
           className="relative z-10 text-center text-white"
         >
-          <h1 className="text-5xl font-bold mb-4">{slug} Collection</h1>
+          <h1 className="text-5xl font-bold mb-4">Perfume Collection</h1>
           <p className="text-xl">Discover our curated selection</p>
-        </motion.div>
-      </motion.section>
+        </div>
+      </section>
 
       {/* Filters */}
       <section className="py-8 px-4">
@@ -152,8 +146,8 @@ export default function CategoryPage() {
                   key={perfume.id}
                   id={perfume.id.toString()}
                   title={perfume.name}
-                  priceMin={perfume.priceMin}
-                  priceMax={perfume.priceMax}
+                  priceMin={perfume.minPrice}
+                  priceMax={perfume.maxPrice}
                   imageUrl={perfume.imageUrl}
                   brand={perfume.brandName}
                   notes={perfume.notes}
