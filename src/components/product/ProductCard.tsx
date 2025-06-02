@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, ShoppingCart, Eye } from 'lucide-react';
 import QuickViewModal from '@/components/product/QuickViewModal';
+import { toast } from 'react-toastify';
 
 interface ProductCardProps {
   id: string;
@@ -34,6 +35,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const halfStar = validatedStar % 1 >= 0.5;
   const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
+  const handleAddToCart = () => {
+    // Thêm vào giỏ hàng ở đây
+    toast.success('Đã thêm sản phẩm vào giỏ hàng!');
+  };
 
   const priceDisplay =
     priceMin && priceMax
@@ -89,7 +94,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <button className="group flex items-center gap-2 px-4 py-2 rounded-full hover:opacity-80 transition-colors">
                 <Heart className="w-5 h-5 hover:text-red-500 transition-colors" />
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-full hover:opacity-80 transition-colors">
+              <button
+                onClick={() => handleAddToCart()}
+                className="flex items-center gap-2 px-4 py-2 rounded-full hover:opacity-80 transition-colors">
                 <ShoppingCart className="w-5 h-5 hover:text-green-500 transition-colors" />
               </button>
               <button

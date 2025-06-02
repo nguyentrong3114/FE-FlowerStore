@@ -8,6 +8,7 @@ import Footer from "@/components/ui/Footer";
 import { Noto_Sans_Balinese } from "next/font/google";
 import ClientOnly from "@/components/base/ClientOnly";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ToastContainer } from "react-toastify";
 // Import phông chữ
 const notoSans = Noto_Sans_Balinese({
   variable: "--font-sans",
@@ -34,6 +35,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            pauseOnHover
+            draggable
+          />
           <LanguageProvider>
             <AuthProvider>
               <ClientOnly>

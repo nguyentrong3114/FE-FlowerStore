@@ -27,6 +27,14 @@ export const paymentService = {
     checkoutUnknown: async (data: CreatePaymentRequestDTO) => {
         const response = await api.post("/payments/unknown", data)
         return response.data
+    },
+    getOrderByUserId: async () => {
+        const response = await api.get(`/payments/user/me`)
+        return response.data
+    },
+    getOrderById: async (orderCode: string) => {
+        const response = await api.post("/payments/order",{orderCode})
+        return response.data
     }
 }
   

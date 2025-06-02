@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { CartService } from "@/services/cart.service";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 interface CartItem {
     productVariantId: number;
     productName: string;
@@ -49,6 +50,7 @@ export default function CartPage() {
             if (newQuantity <= 0) {
                 if (window.confirm('Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?')) {
                     await removeFromCart(productVariantId, item.quantity);
+                    toast.success("Đã xóa sản phẩm khỏi giỏ hàng");
                     return;
                 }
                 return;
@@ -105,6 +107,7 @@ export default function CartPage() {
             setCartItems(updatedCart);
         } catch (error) {
             console.error("Error updating quantity:", error);
+            toast.error("Lỗi khi cập nhật số lượng");
         }
     };
 

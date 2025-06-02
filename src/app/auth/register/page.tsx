@@ -9,6 +9,7 @@ import { UserService } from '@/services/user.service';
 import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -32,12 +33,12 @@ export default function RegisterPage() {
         e.preventDefault();
         setError('');
         setSuccessMessage('');
-
+        setIsLoading(true);
         if (formData.password !== formData.confirmPassword) {
             setError('Mật khẩu xác nhận không khớp');
+            setIsLoading(false);
             return;
         }
-
         try {
             const response = await UserService.register({
                 name: formData.fullName,
@@ -59,6 +60,8 @@ export default function RegisterPage() {
             } else {
                 setError('Đăng ký thất bại. Vui lòng thử lại.');
             }
+        } finally {
+            setIsLoading(false);
         }
 
     };
@@ -87,31 +90,6 @@ export default function RegisterPage() {
                 >
                     Đăng Ký
                 </motion.h1>
-
-                <div className="space-y-4 mb-6">
-                    <motion.button
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        onClick={handleGoogleRegister}
-                        className="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-md border hover:bg-gray-50 transition-all duration-300"
-                    >
-                        <FcGoogle className="text-xl" />
-                        <span>Đăng ký với Google</span>
-                    </motion.button>
-
-                    <motion.button
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4 }}
-                        onClick={handleFacebookRegister}
-                        className="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-md border bg-[#1877F2] text-white hover:bg-[#166FE5] transition-all duration-300"
-                    >
-                        <FaFacebook className="text-xl" />
-                        <span>Đăng ký với Facebook</span>
-                    </motion.button>
-                </div>
-
                 <div className="relative my-6">
                     <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t"></div>
@@ -122,17 +100,6 @@ export default function RegisterPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-
-                    {successMessage && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm text-center"
-                        >
-                            {successMessage}
-                        </motion.div>
-                    )}
-
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -225,13 +192,22 @@ export default function RegisterPage() {
                         <div className='flex justify-center'>
                             <button
                                 type="submit"
-                                className="w-1/2 py-2 px-4 rounded-md font-medium transition-all duration-300 hover:scale-105 border"
+                                disabled={isLoading}
+                                className={`w-1/2 py-2 px-4 rounded-md font-medium transition-all duration-300 hover:scale-105 border ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
-                                Đăng Ký
+                                {isLoading ? 'Đang xử lý...' : 'Đăng Ký'}
                             </button>
                         </div>
                     </motion.div>
-
+                    {successMessage && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm text-center"
+                        >
+                            {successMessage}
+                        </motion.div>
+                    )}
                 </form>
 
                 <motion.div

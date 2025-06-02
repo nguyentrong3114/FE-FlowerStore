@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 import { ProductService } from "@/services/product.service";
 import { useAuth } from "@/contexts/AuthContext";
 import { CartService } from "@/services/cart.service";
-
+import { toast } from "react-toastify";
 interface Variant {
     id: number;
     size: string;
@@ -73,6 +73,7 @@ export default function PerfumeDetailPage() {
             CartService.addToCart(selectedVariant?.id || 0, quantity)
                 .then((res: any) => {
                     console.log("Đã thêm vào giỏ hàng", res);
+                    toast.success("Đã thêm vào giỏ hàng");
                 })
                 .catch((err: Error) => {
                     console.error("Lỗi thêm vào giỏ hàng:", err);
@@ -101,8 +102,10 @@ export default function PerfumeDetailPage() {
                 localCart[existingIndex].quantity += quantity;
                 localCart[existingIndex].totalPrice =
                     localCart[existingIndex].quantity * localCart[existingIndex].price;
+                toast.success("Đã thêm vào giỏ hàng");
             } else {
                 localCart.push(newItem);
+                toast.success("Đã thêm vào giỏ hàng");
             }
 
             localStorage.setItem("local-cart", JSON.stringify(localCart));

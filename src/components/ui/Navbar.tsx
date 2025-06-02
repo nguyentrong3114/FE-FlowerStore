@@ -9,8 +9,7 @@ import DropdownMenu from './DropdownMenu';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import useSWR from 'swr';
-import axios from 'axios';
+import { useCategories } from '@/services/ui.service';
 
 const Navbar = () => {
   const { theme, setTheme } = useTheme();
@@ -57,12 +56,9 @@ const Navbar = () => {
     };
   }, [showNavbar]);
 
-  const fetcher = async (url: string) => {
-    const res = await axios.get(url);
-    return res.data;
-  };
+  const { categories } = useCategories();
 
-  const { data: categories = [] } = useSWR('http://localhost:5047/api/categories', fetcher);
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -105,13 +101,17 @@ const Navbar = () => {
           <li><Link href="/">{t('home')}</Link></li>
           <li><Link href="/aboutus">{t('about')}</Link></li>
           <DropdownMenu
-            links={categories.map((categories: any) => ({
-              text: categories.name,
-              href: `/categories/${categories.slug}`,
-            }))}
+            links={[
+              { text: "All Products", href: '/products' }, // 👈 mục "Tất cả"
+              ...categories.map((category: any) => ({
+                text: category.name,
+                href: `/categories/${category.slug}`,
+              })),
+            ]}
           >
             {t('products')}
           </DropdownMenu>
+
           <li><Link href="/services">{t('services')}</Link></li>
           <li><Link href="/contact">{t('contact')}</Link></li>
         </ul>
