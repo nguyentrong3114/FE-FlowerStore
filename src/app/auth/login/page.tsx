@@ -10,24 +10,51 @@ import { AuthService } from '@/services/auth.service';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const loginSchema = z.object({
+    email: z.string()
+        .email('Email không hợp lệ')
+        .min(1, 'Email là bắt buộc'),
+    password: z.string()
+        .min(1, 'Mật khẩu là bắt buộc')
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
 export default function LoginPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [hidePassword, setHidePassword] = useState(true);
     const { setUser } = useAuth();
     const router = useRouter();
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm<LoginFormData>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: ''
+        }
+    });
+
+    const onSubmit = async (data: LoginFormData) => {
         try {
-            const response = await AuthService.login(email, password);
-            console.log(response.data);
+            const response = await AuthService.login(data.email, data.password);
             setUser(response.data.fullName);
             setError('');
             router.push('/');
-        } catch (error: any) {
+        } catch (error) {
             console.error('Đăng nhập thất bại:', error);
-            setError(error.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+            }
         }
     };
 
@@ -38,9 +65,11 @@ export default function LoginPage() {
     const handleFacebookLogin = () => {
         window.location.href = 'http://localhost:5047/api/session/facebook';
     };
+
     const handleGithubLogin = () => {
         window.location.href = 'http://localhost:5047/api/session/github';
     };
+
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
             <motion.div
@@ -85,7 +114,7 @@ export default function LoginPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5 }}
                         onClick={handleGithubLogin}
-                        className="w-full flex items-center justify-center gap-3 py-2 px-4 rounded-md border bg-[#181717] text-white hover:bg-[#000000] transition-all duration-300"
+                        className="w-full flex items-center justify-cQuenter gap-3 py-2 px-4 rounded-md border bg-[#181717] text-white hover:bg-[#000000] transition-all duration-300"
                     >
                         <FaGithub className="text-xl" />
                         <span>Đăng nhập với Github</span>
@@ -98,7 +127,7 @@ export default function LoginPage() {
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -108,13 +137,14 @@ export default function LoginPage() {
                             Email
                         </label>
                         <input
+                            {...register('email')}
                             type="email"
                             id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
                             className="w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2"
-                            required
                         />
+                        {errors.email && (
+                            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                        )}
                     </motion.div>
 
                     <motion.div
@@ -127,12 +157,10 @@ export default function LoginPage() {
                         </label>
                         <div className='relative'>
                             <input
+                                {...register('password')}
                                 type={hidePassword ? 'password' : 'text'}
                                 id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
                                 className="w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2"
-                                required
                             />
                             <button
                                 type="button"
@@ -142,7 +170,19 @@ export default function LoginPage() {
                                 {hidePassword ? <FaEyeSlash /> : <FaEye />}
                             </button>
                         </div>
+                        {errors.password && (
+                            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                        )}
+                        <div className="mt-2 text-right">
+                            <Link 
+                                href="/auth/forgot-password" 
+                                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                            >
+                                Quên mật khẩu?
+                            </Link>
+                        </div>
                     </motion.div>
+
                     {error && (
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -161,9 +201,10 @@ export default function LoginPage() {
                         <div className='flex justify-center'>
                             <button
                                 type="submit"
-                                className="w-1/2 py-2 px-4 rounded-md font-medium transition-all duration-300 hover:scale-105 border"
+                                disabled={isSubmitting}
+                                className={`w-1/2 py-2 px-4 rounded-md font-medium transition-all duration-300 hover:scale-105 border ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
-                                Đăng Nhập
+                                {isSubmitting ? 'Đang xử lý...' : 'Đăng Nhập'}
                             </button>
                         </div>
                     </motion.div>

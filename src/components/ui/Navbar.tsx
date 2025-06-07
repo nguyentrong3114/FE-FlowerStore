@@ -20,9 +20,11 @@ const Navbar = () => {
   const [mounted, setMounted] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [showSearch, setShowSearch] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const lastScrollY = useRef(0);
   const timeoutId = useRef<NodeJS.Timeout | null>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setMounted(true);
     const handleScroll = () => {
@@ -58,8 +60,6 @@ const Navbar = () => {
 
   const { categories } = useCategories();
 
-
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -80,6 +80,16 @@ const Navbar = () => {
   const handleLogout = async () => {
     await logout();
     router.push('/');
+  };
+
+  // Xử lý submit tìm kiếm
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchValue.trim())}`);
+      setShowSearch(false);
+      setSearchValue('');
+    }
   };
 
   return (
@@ -135,6 +145,7 @@ const Navbar = () => {
               Login
             </Link>
           )}
+          {/* Nút tìm kiếm */}
           <button
             onClick={() => setShowSearch(!showSearch)}
             className="rounded-full transition-colors"
@@ -144,13 +155,31 @@ const Navbar = () => {
           </button>
           <div className="relative">
             {showSearch && (
-              <div className="absolute right-4 mt-8 w-64 rounded-lg shadow-lg transition-all">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm..."
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 "
-                  autoFocus
-                />
+              <div className="absolute right-4 mt-8 w-64 rounded-lg shadow-lg transition-all p-2">
+                <form onSubmit={handleSearchSubmit}>
+                  <div className="flex items-center">
+                    <input
+                      type="text"
+                      placeholder="Tìm kiếm..."
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2"
+                      autoFocus
+                      value={searchValue}
+                      onChange={e => setSearchValue(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Escape') {
+                          setShowSearch(false);
+                        }
+                      }}
+                    />
+                    <button
+                      type="submit"
+                      className="ml-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                      aria-label="Tìm kiếm"
+                    >
+                      <Search size={18} />
+                    </button>
+                  </div>
+                </form>
               </div>
             )}
           </div>

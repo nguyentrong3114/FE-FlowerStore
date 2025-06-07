@@ -3,75 +3,109 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
 import { UserService } from '@/services/user.service';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import axios from 'axios';
+
+const registerSchema = z.object({
+    fullName: z.string()
+        .regex(/^[\p{L}\s]+$/u, 'Họ và tên không được chứa ký tự đặc biệt')
+        .min(2, 'Họ và tên phải có ít nhất 2 ký tự')
+        .max(50, 'Họ và tên không được vượt quá 50 ký tự'),
+    email: z.string()
+        .email('Email không hợp lệ')
+        .min(1, 'Email là bắt buộc'),
+    password: z.string()
+        .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số'),
+    confirmPassword: z.string()
+}).superRefine((data, ctx) => {
+    if (data.password !== data.confirmPassword) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Mật khẩu xác nhận không khớp",
+            path: ["confirmPassword"]
+        });
+    }
+});
+
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
     const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState({
-        fullName: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-    });
-
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const router = useRouter();
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<RegisterFormData>({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            fullName: '',
+            email: '',
+            password: '',
+            confirmPassword: ''
+        }
+    });
+
+    const handleError = (error: unknown) => {
+        if (axios.isAxiosError(error)) {
+            const status = error.response?.status;
+            const message = error.response?.data?.message;
+
+            switch (status) {
+                case 400:
+                    setError('Thông tin đăng ký không hợp lệ');
+                    break;
+                case 409:
+                    setError('Email này đã được sử dụng');
+                    break;
+                case 422:
+                    setError('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại thông tin');
+                    break;
+                case 429:
+                    setError('Quá nhiều yêu cầu đăng ký. Vui lòng thử lại sau');
+                    break;
+                case 500:
+                    setError('Lỗi máy chủ. Vui lòng thử lại sau');
+                    break;
+                default:
+                    setError(message || 'Đăng ký thất bại. Vui lòng thử lại');
+            }
+        } else {
+            setError('Đã xảy ra lỗi không xác định. Vui lòng thử lại');
+        }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const onSubmit = async (data: RegisterFormData) => {
         setError('');
         setSuccessMessage('');
         setIsLoading(true);
-        if (formData.password !== formData.confirmPassword) {
-            setError('Mật khẩu xác nhận không khớp');
-            setIsLoading(false);
-            return;
-        }
+        
         try {
             const response = await UserService.register({
-                name: formData.fullName,
-                email: formData.email,
-                password: formData.password
+                name: data.fullName,
+                email: data.email,
+                password: data.password
             });
 
             if (response.status === 200) {
                 setSuccessMessage('Đăng ký thành công! Đang chuyển hướng...');
-                console.log(response.data);
                 setTimeout(() => {
                     router.push('/auth/otp');
                 }, 2000);
             }
-        } catch (error: any) {
-            console.error('Đăng ký thất bại:', error);
-            if (error.response && error.response.data && error.response.data.message) {
-                setError(error.response.data.message);
-            } else {
-                setError('Đăng ký thất bại. Vui lòng thử lại.');
-            }
+        } catch (error) {
+            handleError(error);
         } finally {
             setIsLoading(false);
         }
-
-    };
-
-    const handleGoogleRegister = () => {
-        // Xử lý đăng ký bằng Google
-    };
-
-    const handleFacebookRegister = () => {
-        // Xử lý đăng ký bằng Facebook
     };
 
     return (
@@ -90,16 +124,8 @@ export default function RegisterPage() {
                 >
                     Đăng Ký
                 </motion.h1>
-                <div className="relative my-6">
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white"></span>
-                    </div>
-                </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -109,14 +135,14 @@ export default function RegisterPage() {
                             Họ và tên
                         </label>
                         <input
+                            {...register('fullName')}
                             type="text"
                             id="fullName"
-                            name="fullName"
-                            value={formData.fullName}
-                            onChange={handleChange}
                             className="w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2"
-                            required
                         />
+                        {errors.fullName && (
+                            <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>
+                        )}
                     </motion.div>
 
                     <motion.div
@@ -128,14 +154,14 @@ export default function RegisterPage() {
                             Email
                         </label>
                         <input
+                            {...register('email')}
                             type="email"
                             id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
                             className="w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2"
-                            required
                         />
+                        {errors.email && (
+                            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                        )}
                     </motion.div>
 
                     <motion.div
@@ -147,14 +173,14 @@ export default function RegisterPage() {
                             Mật khẩu
                         </label>
                         <input
+                            {...register('password')}
                             type="password"
                             id="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
                             className="w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2"
-                            required
                         />
+                        {errors.password && (
+                            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                        )}
                     </motion.div>
 
                     <motion.div
@@ -166,15 +192,16 @@ export default function RegisterPage() {
                             Xác nhận mật khẩu
                         </label>
                         <input
+                            {...register('confirmPassword')}
                             type="password"
                             id="confirmPassword"
-                            name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
                             className="w-full px-4 py-2 rounded-md border focus:outline-none focus:ring-2"
-                            required
                         />
+                        {errors.confirmPassword && (
+                            <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+                        )}
                     </motion.div>
+
                     {error && (
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -184,6 +211,7 @@ export default function RegisterPage() {
                             {error}
                         </motion.div>
                     )}
+
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -199,6 +227,7 @@ export default function RegisterPage() {
                             </button>
                         </div>
                     </motion.div>
+
                     {successMessage && (
                         <motion.div
                             initial={{ opacity: 0 }}
